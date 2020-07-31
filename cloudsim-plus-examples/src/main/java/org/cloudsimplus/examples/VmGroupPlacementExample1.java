@@ -41,8 +41,11 @@ import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmGroup;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
+import org.cloudsimplus.builders.tables.CsvTable;
 import org.cloudsimplus.builders.tables.TextTableColumn;
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -94,9 +97,9 @@ public class VmGroupPlacementExample1 {
     private final Datacenter datacenter0;
 
     public static void main(String[] args) {
+
         new VmGroupPlacementExample1();
     }
-
     private VmGroupPlacementExample1() {
         /*Enables just some level of log messages.
           Make sure to import org.cloudsimplus.util.Log;*/
@@ -207,4 +210,6 @@ public class VmGroupPlacementExample1 {
             cloudletList.add(cloudlet);
         }
     }
+
+
 }

@@ -1,0 +1,6 @@
+Cloudlet;Status ;DC;Host;Host PEs ;VM;VM PEs   ;CloudletLen;CloudletPEs;StartTime;FinishTime;ExecTime
+
+0;SUCCESS;1;0;8;0;4;10000;2;0;20;20
+2;SUCCESS;1;0;8;0;4;10000;2;0;20;20
+1;SUCCESS;1;0;8;1;4;10000;2;0;20;20
+3;SUCCESS;1;0;8;1;4;10000;2;0;20;20

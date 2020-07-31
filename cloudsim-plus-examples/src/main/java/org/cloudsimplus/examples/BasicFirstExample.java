@@ -38,7 +38,10 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelDynamic;
 import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
+import org.cloudsimplus.builders.tables.CsvTable;
 
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +74,9 @@ public class BasicFirstExample {
     private Datacenter datacenter0;
 
     public static void main(String[] args) {
+
         new BasicFirstExample();
+
     }
 
     private BasicFirstExample() {
@@ -94,7 +99,18 @@ public class BasicFirstExample {
 
         final List<Cloudlet> finishedCloudlets = broker0.getCloudletFinishedList();
         new CloudletsTableBuilder(finishedCloudlets).build();
+
+        //自家加的输出代码，来自 https://groups.google.com/forum/#!topic/cloudsim-plus/AvXy_eSiN7M
+        try {
+            CsvTable csv = new CsvTable();
+            csv.setPrintStream(new PrintStream(new java.io.File("E:\\cloudsim-plus-git7\\out\\results.csv")));
+            new CloudletsTableBuilder(broker0.getCloudletFinishedList(), csv).build();
+        }
+        catch (IOException e) { System.err.println(e.getMessage()); }
     }
+
+
+
 
     /**
      * Creates a Datacenter and its Hosts.

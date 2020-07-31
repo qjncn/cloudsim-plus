@@ -102,7 +102,7 @@ public final class GoogleTaskEventsTraceReader extends GoogleTraceReaderAbstract
     }
 
     /**
-     * The index of each field in the trace file.
+     * The index索引 of each field in the trace file.
      */
     public enum FieldIndex implements TraceField<GoogleTaskEventsTraceReader> {
         /**
@@ -376,7 +376,7 @@ public final class GoogleTaskEventsTraceReader extends GoogleTraceReaderAbstract
         final CloudSim simulation,
         final String filePath,
         final InputStream reader,
-        final Function<TaskEvent, Cloudlet> cloudletCreationFunction)
+        final Function<TaskEvent, Cloudlet> cloudletCreationFunction)  //Function<T,R>: 进来一个TaskEvent,返回一个Cloudlet
     {
         super(filePath, reader);
         this.simulation = requireNonNull(simulation);

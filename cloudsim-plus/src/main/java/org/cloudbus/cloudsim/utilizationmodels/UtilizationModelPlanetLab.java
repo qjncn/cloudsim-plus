@@ -38,7 +38,7 @@ public class UtilizationModelPlanetLab extends UtilizationModelAbstract {
     private UnaryOperator<Double> mapper;
 
     /**
-     * The number of 5 minutes intervals inside one day (24 hours),
+     * The number of 5 minutes intervals inside one day (24 hours),一天中5分钟的个数=288
      * since the available PlanetLab traces store resource utilization collected every
      * 5 minutes along 24 hours.
      * This is default number of samples to try to read from the trace file
@@ -48,7 +48,7 @@ public class UtilizationModelPlanetLab extends UtilizationModelAbstract {
 
     /**
      * The default interval between each data line inside a
-     * PlanetLab trace file (in seconds)
+     * PlanetLab trace file (in seconds) 300 s = 5 minites
      */
     public static final int DEF_SCHEDULING_INTERVAL = 300;
 
@@ -59,7 +59,7 @@ public class UtilizationModelPlanetLab extends UtilizationModelAbstract {
 
     /**
      * The resource utilization utilization for an entire day, in intervals of 5
-     * minutes. The size of the array is defined according to the number of utilization samples
+     * minutes. The size of the array is defined according to the number of utilization samples 288
      * specified in the constructor.
      *
      * <p>If there is a {@link #mapper} Function set,
@@ -104,7 +104,7 @@ public class UtilizationModelPlanetLab extends UtilizationModelAbstract {
      * from the trace.</p>
      *
      * @param workloadFilePath the <b>relative path</b> of a PlanetLab Datacenter trace file.
-     * @param schedulingInterval the time interval in which precise utilization can be got from the file
+     * @param schedulingInterval the time interval in which precise utilization can be got from the file 精确利用的时间间隔可以从文件中得到
      * @throws NumberFormatException when a value inside the side is not a valid number
      * @see #getSchedulingInterval()
      */

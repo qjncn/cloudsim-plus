@@ -34,12 +34,12 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 4.0.0
  */
-public final class TaskUsage extends TaskData {
+public final class TaskUsage extends TaskData {  //resource usage 资源使用 属性
     private double startTime;
     private double endTime;
     private double meanCpuUsageRate;
-    private double canonicalMemoryUsage;
-    private double assignedMemoryUsage;
+    private double canonicalMemoryUsage;    //经典
+    private double assignedMemoryUsage;     //分配的
     private double maximumMemoryUsage;
     private double meanDiskIoTime;
     private double meanLocalDiskSpaceUsed;

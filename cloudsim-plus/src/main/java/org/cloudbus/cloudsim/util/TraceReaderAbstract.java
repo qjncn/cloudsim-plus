@@ -71,7 +71,7 @@ public abstract class TraceReaderAbstract implements TraceReader {
             throw new IllegalArgumentException("Invalid trace file name.");
         }
 
-        this.fieldDelimiterRegex = "\\s+";
+        this.fieldDelimiterRegex = "\\s+"; //至少出现一个空格
         this.maxLinesToRead = -1;
         this.inputStream = inputStream;
         this.filePath = filePath;

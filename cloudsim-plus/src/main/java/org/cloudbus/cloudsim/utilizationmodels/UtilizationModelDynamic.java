@@ -34,8 +34,8 @@ import java.util.function.Function;
  * By this way, the class enables the developer to define such a behaviour when instantiating objects
  * of this class.
  *
- * <p>For instance, it is possible to use the class to arithmetically or geometrically increment resource usage,
- * but any kind of increment as logarithmic or exponential is possible.
+ * <p>For instance, it is possible to use the class to arithmetically or geometrically算术或几何上 increment resource usage,
+ * but any kind of increment as logarithmic or exponential is possible.对数或指数
  * For more details, see the {@link #setUtilizationUpdateFunction(Function)}.</p>
  *
  * @author Manoel Campos da Silva Filho

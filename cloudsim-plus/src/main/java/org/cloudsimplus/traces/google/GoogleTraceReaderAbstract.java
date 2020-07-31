@@ -57,7 +57,7 @@ abstract class GoogleTraceReaderAbstract<T> extends TraceReaderBase {
 
     /* default */  GoogleTraceReaderAbstract(final String filePath, final InputStream reader) {
         super(filePath, reader);
-        this.setFieldDelimiterRegex(",");
+        this.setFieldDelimiterRegex(","); //设置分隔符
         availableObjects = new HashSet<>();
     }
 
