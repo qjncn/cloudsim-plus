@@ -39,6 +39,7 @@ import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.hosts.HostStateHistoryEntry;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
@@ -111,7 +112,7 @@ public final class ManualMigrationExample1 {
      * <p>The 16000 Mb/s is the same as 2000 MB/s. Since just half of this capacity
      * is used for VM migration, only 1000 MB/s will be available for this process.
      * The time that takes to migrate a Vm depend on the VM RAM capacity.
-     * Since VMs in this example are created with 2000 MB of RAM, any migration
+     * Since VMs in this example are created with 2000 MB of RAM, any migration   VM迁移时间主要取决于RAM的迁移，比如 2G RAM
      * will take 2 seconds to finish, as can be seen in the logs.
      */
     private static final long   HOST_BW = 16000L; //Mb/s
@@ -184,7 +185,7 @@ public final class ManualMigrationExample1 {
     private void clockTickListener(EventInfo info) {
         if(!migrationRequested && info.getTime() >= 10){
             Vm sourceVm = vmList.get(0);
-            Host targetHost = hostList.get(hostList.size() - 1);
+            Host targetHost = hostList.get(hostList.size() - 1);  // 迁移到 Host 4/DC 1
             System.out.printf("%n# Requesting the migration of %s to %s%n%n", sourceVm, targetHost);
             datacenter0.requestVmMigration(sourceVm, targetHost);
             this.migrationRequested = true;
@@ -200,14 +201,14 @@ public final class ManualMigrationExample1 {
      * @param host
      */
     private void printHostHistory(Host host) {
-        final boolean cpuUtilizationNotZero =
+        final boolean cpuUtilizationNotZero =                       //从历史记录里调用cpu使用率记录
             host.getStateHistory()
                 .stream()
                 .map(HostStateHistoryEntry::getPercentUsage)
                 .anyMatch(cpuUtilization -> cpuUtilization > 0);
 
         if(cpuUtilizationNotZero) {
-            new HostHistoryTableBuilder(host).setTitle(host.toString()).build();
+            new HostHistoryTableBuilder(host).setTitle(host.toString()).build();    //创建历史记录表格
         } else System.out.printf("\t%s CPU was zero all the time%n", host);
     }
 
@@ -229,7 +230,7 @@ public final class ManualMigrationExample1 {
      */
     public Cloudlet createCloudlet(Vm vm, DatacenterBroker broker) {
         final Cloudlet cloudlet =
-            new CloudletSimple(CLOUDLET_LENGHT, (int)vm.getNumberOfPes())
+            new CloudletSimple(CLOUDLET_LENGHT, (int)vm.getNumberOfPes())   //注意，cloulet的cpu数量是要占用全部vm的pes的，所以最后20秒完成任务而不是10秒
                 .setFileSize(CLOUDLET_FILESIZE)
                 .setOutputSize(CLOUDLET_OUTPUTSIZE)
                 .setUtilizationModel(new UtilizationModelFull());
@@ -252,7 +253,7 @@ public final class ManualMigrationExample1 {
         final Vm vm = new VmSimple(VM_MIPS, pes);
         vm
           .setRam(VM_RAM).setBw((long)VM_BW).setSize(VM_SIZE)
-          .setCloudletScheduler(new CloudletSchedulerTimeShared());
+          .setCloudletScheduler(new CloudletSchedulerSpaceShared());
         return vm;
     }
 
@@ -266,7 +267,7 @@ public final class ManualMigrationExample1 {
         this.hostList = new ArrayList<>();
         for(int i = 0; i < HOSTS; i++){
             final int pes = HOST_INITIAL_PES + i;
-            hostList.add(createHost(pes, HOST_MIPS));
+            hostList.add(createHost(pes, HOST_MIPS));  //创建的host的pe逐渐增加，从4核逐次增加1到8核
         }
         System.out.println();
 

@@ -63,7 +63,7 @@ import java.util.List;
  * <p>The example then performs VM migration using
  * a {@link VmAllocationPolicyMigrationBestFitStaticThreshold}.
  * Such a policy migrates VMs based on
- * a static host CPU utilization threshold.
+ * a static host CPU utilization threshold.    基于CPU利用率阈值
  * The VmAllocationPolicy used in this example ignores power usage of Hosts.
  * This way, it isn't required to set a PowerModel for Hosts.</p>
  *

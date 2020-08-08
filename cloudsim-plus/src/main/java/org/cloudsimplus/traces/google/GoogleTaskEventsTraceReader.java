@@ -352,7 +352,7 @@ public final class GoogleTaskEventsTraceReader extends GoogleTraceReaderAbstract
     public GoogleTaskEventsTraceReader(
         final CloudSim simulation,
         final String filePath,
-        final Function<TaskEvent, Cloudlet> cloudletCreationFunction) throws IOException
+        final Function<TaskEvent, Cloudlet> cloudletCreationFunction) throws IOException //Function<T,R>: 进来一个TaskEvent,返回一个Cloudlet
     {
         this(simulation, filePath, Files.newInputStream(Paths.get(filePath)), cloudletCreationFunction);
     }

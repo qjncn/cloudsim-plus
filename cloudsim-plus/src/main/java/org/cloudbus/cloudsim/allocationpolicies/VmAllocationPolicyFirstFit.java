@@ -11,7 +11,7 @@ import java.util.Optional;
  * which finds the first Host having suitable resources to place a given VM.
  * This is a high time-efficient policy with a best-case complexity O(1)
  * and a worst-case complexity O(N), where N is the number of Hosts.
- * Additionally, such a policy is resource efficient, because it performs
+ * Additionally, such a policy is resource efficient, because it performs 因为它执行服务器整合,试图将最大数量的VMs放置到同一主机上,以增加主机的资源使用。
  * server consolidation by trying to place the maximum number of VMs
  * into the same Host in order to increase Host's resource usage.
  *

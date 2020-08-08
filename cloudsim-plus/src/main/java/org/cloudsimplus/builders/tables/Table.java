@@ -40,7 +40,7 @@ public interface Table {
     List<Object> newRow();
 
     /**
-     * Adds a column with a given to the end of the table's columns to be printed.
+     * Adds a column with a given to the end of the table's columns to be printed.将带有给定值的列添加到要打印的表列的末尾
      *
      * @param columnTitle The title of the column to be added.
      * @return The created column.

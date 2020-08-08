@@ -80,7 +80,9 @@ import java.util.function.Function;
  * @TODO {@link MachineEventType#UPDATE} events are not being processed yet.
  */
 public class GoogleMachineEventsExample1 {
-    private static final String TRACE_FILENAME = "workload/google-traces/machine-events-sample-1.csv";
+    //private static final String TRACE_FILENAME = "workload/google-traces/machine-events-sample-1.csv";
+    //private static final String TRACE_FILENAME = "F:\\clusterdata-2011-2\\machine_events\\part-00000-of-00001.csv";
+    private static final String TRACE_FILENAME ="E:\\cloudsim-plus-git7\\cloudsim-plus-examples\\src\\main\\resources\\workload\\google-traces\\machine-events-sample-1.csv";
     private static final int HOST_BW = 10;
     private static final long HOST_STORAGE = 100000;
     private static final double HOST_MIPS = 1000;
@@ -102,7 +104,7 @@ public class GoogleMachineEventsExample1 {
         //Log.setLevel(ch.qos.logback.classic.Level.WARN);
 
         simulation = new CloudSim();
-        createDatacenters();
+        createDatacenters();  //这个函数里构造数据中心，也构造读取文件创建host
 
         //Creates a broker that is a software acting on behalf a cloud customer to manage his/her VMs and Cloudlets
         broker0 = new DatacenterBrokerSimple(simulation);
@@ -166,8 +168,9 @@ public class GoogleMachineEventsExample1 {
         * Then, returns the list of immediately created Hosts (for timestamp 0).
         * The second Datacenter that is given as parameter will be used to add the Hosts with timestamp greater than 0.
         * */
+        //时间戳一到就在后面数据中心开始创建HOST
         reader.setDatacenterForLaterHosts(datacenters.get(1));
-        final List<Host> hostList = new ArrayList<>(reader.process());
+        final List<Host> hostList = new ArrayList<>(reader.process());// .process() 开始创建一组host列表
 
         System.out.println();
         System.out.printf("# Created %d Hosts that were immediately available from the Google trace file%n", hostList.size());
@@ -209,7 +212,7 @@ public class GoogleMachineEventsExample1 {
         /* Creates 1 VM for each available Host of the datacenter.
         *  Each VM will have the same RAM, BW and Storage of the its Host. */
         for (Host host : datacenter.getHostList()) {
-            list.add(createVm(host));
+            list.add(createVm(host));   //  VmSimple(1000 mips, host.getNumberOfPes())
         }
 
         broker0.submitVmList(list);

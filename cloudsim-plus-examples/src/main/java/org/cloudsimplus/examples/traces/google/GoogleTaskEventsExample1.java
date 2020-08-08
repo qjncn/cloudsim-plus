@@ -98,6 +98,7 @@ import static org.cloudbus.cloudsim.utilizationmodels.UtilizationModel.Unit;
  */
 public class GoogleTaskEventsExample1 {
     private static final String TRACE_FILENAME = "workload/google-traces/task-events-sample-1.csv";
+    //private static final String TRACE_FILENAME = "F:\\clusterdata-2011-2\\task_events\\part-00000-of-00500.csv.gz";
 
     private static final int HOSTS = 10;
     private static final int VMS = 8;

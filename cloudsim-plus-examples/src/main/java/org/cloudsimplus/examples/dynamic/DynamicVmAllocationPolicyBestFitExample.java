@@ -75,6 +75,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
+ * 选择合适的主机,使用最低数量的可用PEs,足以运行VM。
+ *
  * An example showing how to create 1 Datacenter with 5 hosts,
  * 1 VM by host and 1 cloudlet by VM and perform VM allocation by
  * using Java 8 Functional Programming to change, at runtime, the

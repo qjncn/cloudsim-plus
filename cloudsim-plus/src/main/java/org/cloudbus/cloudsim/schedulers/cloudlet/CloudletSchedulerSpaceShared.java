@@ -14,14 +14,14 @@ import org.cloudbus.cloudsim.resources.Pe;
 /**
  * CloudletSchedulerSpaceShared implements a policy of scheduling performed by a
  * virtual machine to run its {@link Cloudlet Cloudlets}. It considers there
- * will be only one Cloudlet per VM. Other Cloudlets will be in a waiting list.
+ * will be only one Cloudlet per VM. Other Cloudlets will be in a waiting list.     一个VM只有一个cloudlet
  * It also considers that the time to transfer Cloudlets to the Vm happens
  * before Cloudlet starts executing. I.e., even though Cloudlets must wait for
  * CPU, data transfer happens as soon as Cloudlets are submitted.
  *
  * <p>
  * <b>This scheduler does not consider Cloudlets priorities to define execution
- * order. If actual priorities are defined for Cloudlets, they are just ignored
+ * order. If actual priorities are defined for Cloudlets, they are just ignored     本算法实现的时候忽略了cloudlet的优先级
  * by the scheduler.</b></p>
  *
  * @author Rodrigo N. Calheiros

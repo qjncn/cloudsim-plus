@@ -9,7 +9,7 @@
 package org.cloudbus.cloudsim.utilizationmodels;
 
 /**
- * A {@link UtilizationModel} that according to which, a Cloudlet always utilizes
+ * A {@link UtilizationModel} that according to which, a Cloudlet always utilizes :Cloudlet始终100%的利用其Vm资源。
  * a given allocated resource from its Vm at 100%, all the time.
  * The methods {@link #getUtilization(double)} and {@link #getUtilization()}
  * always return 1 any time they are called.
