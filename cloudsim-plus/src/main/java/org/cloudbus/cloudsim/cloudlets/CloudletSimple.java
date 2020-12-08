@@ -43,6 +43,8 @@ public class CloudletSimple extends CloudletAbstract {
     /**
      * Creates a Cloudlet with no priority or id. The id is defined when the Cloudlet is submitted to
      * a {@link DatacenterBroker}. The file size and output size is defined as 1.
+     * 创建一个没有优先级或id的Cloudlet。id是在提交Cloudlet时定义的
+     * 一个{@link DatacenterBroker}。文件大小和输出大小被定义为1。
      *
      * <p><b>NOTE:</b> By default, the Cloudlet will use a {@link UtilizationModelFull} to define
      * CPU utilization and a {@link UtilizationModel#NULL} for RAM and BW.

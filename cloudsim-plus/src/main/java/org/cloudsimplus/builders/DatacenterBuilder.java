@@ -179,7 +179,7 @@ public class DatacenterBuilder implements Builder {
     /**
      * Sets a {@link Function} used to create Datacenters.
      * It must receive a list of {@link Host} for the Datacenter it will create.
-     * @param datacenterCreationFunction
+     * @param datacenterCreationFunction0
      */
     public void setDatacenterCreationFunction(final Function<List<Host>, Datacenter> datacenterCreationFunction) {
         this.datacenterCreationFunction = Objects.requireNonNull(datacenterCreationFunction);

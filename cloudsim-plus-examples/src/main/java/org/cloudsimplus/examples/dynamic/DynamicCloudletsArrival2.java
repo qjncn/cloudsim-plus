@@ -59,6 +59,16 @@ import java.util.List;
  * it is used a CloudletSchedulerTimeShared, analyzing the output
  * you can see that each cloudlet starts in a different time,
  * simulating different arrivals.
+ *演示如何延迟cloudlet提交的示例。
+ * 尽管有足够的资源同时运行所有的cloudlet，
+ * *示例延迟了VM中每个cloudlet的创建，
+ * *模拟cloudlet的动态到达。
+ * *为每个实例化的cloudlet定义一个不同的
+ * *提交延迟。
+ * *即使有足够的资源同时运行所有cloudlet，
+ * *它使用CloudletSchedulerTimeShared来分析输出
+ * *你可以看到每一片云在不同的时间开始，
+ * *模拟不同的到达。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0

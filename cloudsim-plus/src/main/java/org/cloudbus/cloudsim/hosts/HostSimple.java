@@ -46,7 +46,9 @@ import static java.util.stream.Collectors.*;
  * policy for provisioning memory and bw, as well as an allocation policy for
  * PEs to {@link Vm virtual machines}. A host is associated to a Datacenter and
  * can host virtual machines.
- *
+ *一个主机类，它在{@link数据中心}中实现物理机器(PM)的最基本特性。它执行与管理虚拟机相关的操作(例如，创建和销毁)。
+ * 主机有一个已定义的策略来提供内存和bw，以及一个分配策略来将PEs分配到{@link Vm虚拟机}。
+ * 主机与数据中心相关联，可以托管虚拟机。
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov
  * @since CloudSim Toolkit 1.0
@@ -87,7 +89,7 @@ public class HostSimple implements Host {
     private double lastBusyTime;
 
     /** @see #getIdleShutdownDeadline() */
-    private double idleShutdownDeadline;
+    private double idleShutdownDeadline; //算法中的timeout
 
     private final Ram ram;
     private final Bandwidth bw;

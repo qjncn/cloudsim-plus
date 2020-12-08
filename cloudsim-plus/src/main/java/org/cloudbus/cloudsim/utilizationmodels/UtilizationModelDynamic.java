@@ -33,6 +33,8 @@ import java.util.function.Function;
  * the simulation time. It accepts a Lambda Expression that defines how the utilization increment must behave.
  * By this way, the class enables the developer to define such a behaviour when instantiating objects
  * of this class.
+ *一个Cloudlet {@link UtilizationModel}，允许在模拟过程中增加相关资源的利用率。它接受一个Lambda表达式，
+ * 该表达式定义了利用率增量的行为方式。通过这种方式，该类使开发人员能够在实例化该类的对象时定义这样的行为。
  *
  * <p>For instance, it is possible to use the class to arithmetically or geometrically算术或几何上 increment resource usage,
  * but any kind of increment as logarithmic or exponential is possible.对数或指数
@@ -52,6 +54,10 @@ public class UtilizationModelDynamic extends UtilizationModelAbstract {
      * the researcher's simulation that the utilization has changed.
      * Check the copy constructor documentation for more details
      * on how this attribute is used.
+     * 指示利用率模型是否是只读的。
+     * *当使用{@link #UtilizationModelDynamic(UtilizationModelDynamic)复制构造函数}来克隆当前的UtilizationModel实例时，它被设置为true。
+     * *当调用{@link #utilizationUpdateFunction}来通知研究者的模拟使用情况已经改变时，这样的克隆作为参数给出。
+     * *查看复制构造函数文档以了解更多关于如何使用此属性的细节。
      */
     private boolean readOnly;
     private double currentUtilization;
@@ -103,6 +109,9 @@ public class UtilizationModelDynamic extends UtilizationModelAbstract {
      * Creates a UtilizationModelDynamic that the initial resource utilization
      * will be defined according to the given parameter and the {@link Unit}
      * will be set as {@link Unit#PERCENTAGE}.
+     * 创建一个可利用的动态模型，说明初始资源的利用
+     * 将根据给定参数和{@link Unit}定义
+     * 将被设置为{@link Unit#PERCENTAGE}。
      *
      * <p><b>The utilization will not be dynamically incremented
      * until that an increment function is defined by the {@link #setUtilizationUpdateFunction(Function)}.</b></p>
@@ -124,8 +133,29 @@ public class UtilizationModelDynamic extends UtilizationModelAbstract {
      *                           on the {@code unit} parameter
      */
     public UtilizationModelDynamic(final Unit unit, final double initialUtilization) {
-        this(unit, initialUtilization, unit == Unit.PERCENTAGE ? Conversion.HUNDRED_PERCENT : 0);
+        this(unit, initialUtilization, unit == Unit.PERCENTAGE ? Conversion.HUNDRED_PERCENT :  0);
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Creates a UtilizationModelDynamic that the initial resource utilization,
@@ -227,6 +257,7 @@ public class UtilizationModelDynamic extends UtilizationModelAbstract {
      * Gets the time difference from the current simulation time to the
      * last time the resource utilization was updated.
      * @return
+     * 时间间隔
      */
     public double getTimeSpan(){
         return currentUtilizationTime - previousUtilizationTime;

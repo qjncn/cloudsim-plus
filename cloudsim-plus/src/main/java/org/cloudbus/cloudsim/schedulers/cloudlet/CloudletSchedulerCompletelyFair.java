@@ -41,6 +41,9 @@ import static java.util.stream.Collectors.toList;
  * scheduler that shares CPU cores between running applications by preempting
  * them after a time period (time-slice) to allow other ones to start executing
  * during their time-slices.
+ * 一个简化的实现< A href="https://en.wikipedia.org/wiki/Completely_Fair_Scheduler">完全公平调度器(CFS)</ A >，
+ * 这是在最近的Linux内核上用于大多数任务的默认调度器。它是一个时间共享调度器，
+ * 在运行的应用程序之间共享CPU内核，方法是在一段时间(时间片)之后抢占CPU内核，以允许其他应用程序在它们的时间片期间开始执行。
  *
  * <p><b>This scheduler supposes that Cloudlets priorities are in the range from [-20 to 19],
  * as used in <a href="http://man7.org/linux/man-pages/man1/nice.1.html">Linux Kernel</a></b>. Despite setting

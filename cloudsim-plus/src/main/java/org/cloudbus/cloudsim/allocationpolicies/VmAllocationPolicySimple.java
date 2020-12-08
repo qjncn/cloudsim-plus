@@ -26,7 +26,11 @@ import java.util.stream.Stream;
  * Such an implementation is not appropriate for large scale scenarios.</p>
  *
  * <p><b>NOTE: This policy doesn't perform optimization of VM allocation by means of VM migration.</b></p>
- *
+ *一个VmAllocationPolicy实现，它选择使用最少PEs的主机作为VM的主机。
+ * 因此，这是一个最差的适合策略</b>，将每个VM分配到具有最多可用PEs的主机中。
+ * 这是一个计算上非常复杂的策略，因为为VM分配主机的最坏情况复杂度是O(N)，其中N是主机的数量。
+ * 这样的实现不适合大规模的场景
+ * 注意:该策略没有通过VM迁移来优化VM分配
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov
  * @author Manoel Campos da Silva Filho

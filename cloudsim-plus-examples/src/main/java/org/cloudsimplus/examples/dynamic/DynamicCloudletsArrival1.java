@@ -55,6 +55,12 @@ import java.util.List;
  * simulating the dynamic arrival of cloudlets.
  * It first creates a set of cloudlets without delay and
  * another set of cloudlets all with the same submission delay.
+ * 演示如何延迟cloudlet提交的示例。
+ * 尽管有足够的资源同时运行所有的cloudlet，
+ * *示例延迟了VM中一些cloudlet的创建和执行，
+ * *模拟cloudlet的动态到达。
+ * *它首先创建一组cloudlet，没有延迟和
+ * *另一组cloudlet都具有相同的提交延迟。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0

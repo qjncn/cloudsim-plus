@@ -34,7 +34,8 @@ public class PowerModelLinear  extends PowerModelSimple {
 	 */
 	public PowerModelLinear(final double maxPower, final double staticPowerPercent) {
 	    /** Calls the super constructor passing a {@link #powerFunction}
-         * that indicates the base power consumption is linear to CPU utilization.*/
+         * that indicates the base power consumption is linear to CPU utilization.
+         * 调用父类构造函数，传递一个{@link #powerFunction}，表示基本功耗与CPU利用率成线性关系*/
 	    super(maxPower, staticPowerPercent, utilizationPercent -> utilizationPercent);
 	}
 }

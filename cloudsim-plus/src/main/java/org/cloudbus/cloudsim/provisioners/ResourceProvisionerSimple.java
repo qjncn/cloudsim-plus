@@ -19,6 +19,7 @@ import java.util.Objects;
  * A best-effort {@link ResourceProvisioner} policy used by a {@link Host} to provide a resource to VMs:
  * <ul>
  *  <li>if there is available amount of the resource on the host, it provides;</li>
+ *  最优的，如果主机上有可用的资源，它提供
  *  <li>otherwise, it fails.</li>
  * </ul>
  *

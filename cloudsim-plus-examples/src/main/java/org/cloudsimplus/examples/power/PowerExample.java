@@ -71,7 +71,7 @@ import java.util.Map;
  * and the other half will have the double of this length.
  * This way, it's possible to see that for the last half of the
  * simulation time, a Host doesn't use the entire CPU capacity,
- * and therefore doesn't consume the maximum power.</p>
+ * and therefore doesn't consume the maximum power.</p>     cloudlet 100%的占用pe，而且长度前后不同，这样最后的时候功率就会减少
  *
  * <p>However, you may notice in this case that the power usage isn't
  * half of the maximum consumption, because there is a minimum
@@ -80,7 +80,7 @@ import java.util.Map;
  * In the case of the {@link PowerModelLinear},
  * there is a constant power which is computed
  * and added to consumer power when it
- * is lower or equal to the minimum usage percentage.</p>
+ * is lower or equal to the minimum usage percentage.</p>   电源的idel值是0.7
  *
  * <p>Realize that the Host CPU Utilization History is only computed
  * if VMs utilization history is enabled by calling
@@ -93,7 +93,7 @@ import java.util.Map;
  * Then, the next line contains data for time 10.
  * That means between time 0 and time 9 (from time 0 to 9 we have 10 samples),
  * the CPU utilization and power consumption
- * is the one provided for time 0.</p>
+ * is the one provided for time 0.</p>                      时间间隔按照前一个点计算值
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.2.4
@@ -103,7 +103,7 @@ import java.util.Map;
  */
 public class PowerExample {
     /**
-     * Defines, between other things, the time intervals
+     * Defines, between other things, the time intervals    时间间隔
      * to keep Hosts CPU utilization history records.
      */
     private static final int SCHEDULING_INTERVAL = 10;
@@ -120,11 +120,13 @@ public class PowerExample {
     /**
      * Defines the minimum percentage of power a Host uses,
      * even it it's idle.
+     * 定义在idle空闲状态下主机的能量消耗百分比.原来是0.7按照论文更改成0.6
      */
-    private static final double STATIC_POWER_PERCENT = 0.7;
+    private static final double STATIC_POWER_PERCENT = 0.6;
 
     /**
      * The max number of watt-second (Ws) of power a Host uses.
+     * 主机使用的最大瓦秒数(Ws)。论文中145是active的功率，程序原来是50
      */
     private static final int MAX_POWER_WATTS_SEC = 50;
 

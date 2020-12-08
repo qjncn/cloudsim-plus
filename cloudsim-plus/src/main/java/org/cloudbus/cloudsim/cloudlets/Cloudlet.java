@@ -28,6 +28,9 @@ import java.util.List;
  * Pattern in order to start avoiding {@link NullPointerException}
  * when using the {@link Cloudlet#NULL} object instead
  * of attributing {@code null} to {@link Cloudlet} variables.
+ *一个由提供基本cloudlet特性的每个类实现的接口。该接口实现了空对象设计模式，
+ * 以便在使用{@link Cloudlet# Null}对象时开始避免{@link NullPointerException}，
+ * 而不是将{@code Null}属性赋给{@link Cloudlet}变量。
  *
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov
@@ -795,7 +798,7 @@ public interface Cloudlet extends UniquelyIdentifiable, Comparable<Cloudlet>, Cu
 
     /**
      * Adds a Listener object that will be notified when a cloudlet finishes
-     * its execution at a given {@link Vm}.
+     * its execution at a given {@link Vm}.任务完成的时候提醒
      *
      * @param listener the listener to add
      * @return

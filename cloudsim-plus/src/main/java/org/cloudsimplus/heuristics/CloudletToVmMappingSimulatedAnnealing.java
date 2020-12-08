@@ -33,6 +33,8 @@ import java.util.List;
  * A heuristic that uses <a href="http://en.wikipedia.org/wiki/Simulated_annealing">Simulated Annealing</a>
  * to find a sub-optimal mapping among a set of Cloudlets and VMs in order to reduce
  * the number of idle or overloaded Vm Pe's.
+ * 在一组cloudlet和vm之间找到一个次优的映射，以便减少
+ * *空闲或超载的Vm Pe的数量。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0
@@ -51,6 +53,7 @@ public class CloudletToVmMappingSimulatedAnnealing
 
     /**
      * Creates a new Simulated Annealing Heuristic for solving Cloudlets to Vm's mapping.
+     * 创建一个新的模拟退火启发式来解决cloudlet到Vm的映射。
      *
      * @param initialTemperature the system initial temperature
      * @param random a random number generator

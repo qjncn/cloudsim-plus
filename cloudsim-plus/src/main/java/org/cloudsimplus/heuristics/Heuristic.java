@@ -34,17 +34,21 @@ import org.slf4j.LoggerFactory;
  * for instance, in exponential time. Such problems can be, for instance,
  * mapping a set of VMs to existing Hosts or mapping a set of Cloudlets
  * to VMs.
+ *提供了用于实现启发式寻找解决复杂问题的方法，其中的解决空间是大的搜索。
+ * 这些问题通常是np困难的问题，寻找解决方案的时间会以指数时间增长。
+ * 例如，这类问题可能是将一组vm映射到现有主机，或者将一组cloudlet映射到vm。
  *
  * A heuristic implementation thus provides an approximation of
  * an optimal solution (a suboptimal solution).
+ * 启发式实现因此提供了一个近似的最优解(次最优解)。
  * </p>
  *
  * <p>Different heuristic can be implemented, such as
- * <a href="https://en.wikipedia.org/wiki/Tabu_search">Tabu search</a>,
+ * <a href="https://en.wikipedia.org/wiki/Tabu_search">Tabu search禁忌搜索</a>,
  * <a href="https://en.wikipedia.org/wiki/Simulated_annealing">Simulated annealing</a>,
  * <a href="https://en.wikipedia.org/wiki/Hill_climbing">Hill climbing</a> or
  * <a href="https://en.wikipedia.org/wiki/Ant_colony_optimization_algorithms">Ant colony optimization</a>,
- * to name a few.</p>
+ * to name a few.举几个来说</p>
  *
  * @author Manoel Campos da Silva Filho
  * @param <S> the {@link HeuristicSolution class of solutions} the heuristic will deal with
@@ -57,6 +61,7 @@ public interface Heuristic<S extends HeuristicSolution<?>> {
     /**
      * A property that implements the Null Object Design Pattern for {@link Heuristic}
      * objects.
+     * 实现{@link启发式}对象的空对象设计模式的属性。
      */
     Heuristic NULL = new HeuristicNull();
 
@@ -69,6 +74,10 @@ public interface Heuristic<S extends HeuristicSolution<?>> {
      * 1 is to accept the neighbor solution, while intermediate
      * values defines the probability that the neighbor solution
      * will be randomly accepted.
+     * *与{@link #getBestSolutionSoFar()}相比，计算接受概率来定义是否接受邻居解决方案。@return接受概率，范围从[0到1]，其中
+     * 0是维护{@link #getBestSolutionSoFar() current solution}当前解决方案，
+     * 1是接受邻居解，中间值定义了邻居解被随机接受的概率。
+     *
      */
     double getAcceptanceProbability();
 

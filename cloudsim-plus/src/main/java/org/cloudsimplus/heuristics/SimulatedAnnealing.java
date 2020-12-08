@@ -29,12 +29,16 @@ import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
  * A base class for implementation of
  * <a href="http://en.wikipedia.org/wiki/Simulated_annealing">Simulated Annealing</a>
  * algorithms used to find a suboptimal solution for a problem defined by sub-classes of this one.
+ *用于实现< A href=" http://en.wikipedia.org/wiki/simulated_退火">模拟退火</ A >的基类
+ * 为一个由该问题的子类定义的问题寻找次优解的算法。
  *
  * The Simulated Annealing is a heuristic that starts with a random solution
  * and iteratively generates a random neighbor solution that its fitness
  * is assessed in order to reach a sub-optimal result.
  * The algorithm try to avoid local maximums, randomly selecting
  * worse solutions to get away from being stuck in these locals.
+ * 模拟退火是一种启发式方法，它从一个随机解开始，迭代地生成一个随机邻居解，并对其适应度进行评估，以获得次优结果。
+ * 该算法试图避免局部极值，随机选择较差的解决方案，以避免陷入这些局部。
  *
  * <p>The algorithm basically works as follows:
  * <ol>
@@ -93,10 +97,13 @@ public abstract class SimulatedAnnealing<S extends HeuristicSolution<?>> extends
      * of a worse solution (considering its cost)
      * to be accepted or not in order to avoid local minima.
      * The computed Boltzmann factor also ensures that better solutions are always accepted.
+     *利用玻尔兹曼分布来定义接受或不接受较差解的概率(考虑其代价)，以避免局部极小值。
+     * 计算的玻尔兹曼因子也确保更好的解总是被接受。
      *
      * The Boltzmann Constant has different values depending of the used unit.
      * In this case, it was used the natural unit of information.</p>
-     *
+     *玻尔兹曼常数根据使用的单位有不同的值。
+     * 在本例中，它被用作信息的自然单位。
      * @return {@inheritDoc}
      *
      * @see <a href="http://www.wikiwand.com/en/Boltzmann_distribution">Boltzmann distribution</a>
@@ -114,6 +121,7 @@ public abstract class SimulatedAnnealing<S extends HeuristicSolution<?>> extends
      *
      * @return true if the system is cold enough and solution search can be
      * stopped, false otherwise
+     * 如果系统足够冷，解决方案搜索可以停止，为真，否则为假
      */
     @Override
     public boolean isToStopSearch() {
@@ -124,6 +132,7 @@ public abstract class SimulatedAnnealing<S extends HeuristicSolution<?>> extends
      * {@inheritDoc}
      *
      * Cools the system at a the defined {@link #getCoolingRate() cooling rate}.
+     * 以定义的{@link #getCoolingRate() cooling rate}冷却速率冷却系统。
      * @see #getCurrentTemperature() ()
      */
     @Override
@@ -138,7 +147,7 @@ public abstract class SimulatedAnnealing<S extends HeuristicSolution<?>> extends
      * Gets the current system temperature that
      * represents the system state at the time
      * of the method call.
-     *
+     *获取当前系统温度。
      * @return the current system temperature
      */
     public double getCurrentTemperature() {

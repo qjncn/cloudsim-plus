@@ -40,6 +40,7 @@ public interface CloudletToVmMappingHeuristic extends Heuristic<CloudletToVmMapp
     /**
      * A property that implements the Null Object Design Pattern for {@link Heuristic}
      * objects.
+     * 实现{@link Heuristic}对象的空对象设计模式的属性。
      */
     CloudletToVmMappingHeuristic NULL = new CloudletToVmMappingHeuristicNull();
 

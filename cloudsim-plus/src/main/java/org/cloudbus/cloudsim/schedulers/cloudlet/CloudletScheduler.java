@@ -26,8 +26,10 @@ import java.util.List;
  * An interface to be implemented by each class that provides a policy
  * of scheduling performed by a virtual machine to run its {@link Cloudlet Cloudlets}.
  * Each VM has to have its own instance of a CloudletScheduler.
+ *一个由每个类实现的接口，提供一个由运行其{@link Cloudlet Cloudlets}的虚拟机执行的调度策略。
+ * 每个VM都必须有自己的CloudletScheduler实例。
  *
- * <p>It also implements the Null Object
+ * <p>It also implements the Null Object  它还实现了空对象
  * Design Pattern in order to start avoiding {@link NullPointerException} when
  * using the {@link CloudletScheduler#NULL} object instead of attributing {@code null} to
  * {@link CloudletScheduler} variables.</p>
@@ -47,7 +49,7 @@ public interface CloudletScheduler extends Serializable {
     CloudletScheduler NULL = new CloudletSchedulerNull();
 
     /**
-     * Sets a cloudlet as failed.
+     * Sets a cloudlet as failed. 将cloudlet设置为失败
      *
      * @param cloudlet ID of the cloudlet to set as failed
      * @return the failed cloudlet or {@link Cloudlet#NULL} if not found
@@ -55,7 +57,7 @@ public interface CloudletScheduler extends Serializable {
     Cloudlet cloudletFail(Cloudlet cloudlet);
 
     /**
-     * Cancels execution of a cloudlet.
+     * Cancels execution of a cloudlet.取消cloudlet的执行
      *
      * @param cloudlet the cloudlet being canceled
      * @return the canceled cloudlet or {@link Cloudlet#NULL} if not found
@@ -65,6 +67,8 @@ public interface CloudletScheduler extends Serializable {
     /**
      * Sets the status of a Cloudlet to {@link Cloudlet.Status#READY}
      * so that it can start executing as soon as possible.
+     *将Cloudlet的状态设置为{@link Cloudlet. status #READY}
+     * *以便它能尽快开始执行。
      *
      * @param cloudlet the cloudlet to be started
      * @return $true if cloudlet was set to ready, $false otherwise
@@ -109,14 +113,14 @@ public interface CloudletScheduler extends Serializable {
 
     /**
      * Gets a <b>read-only</b> List of cloudlets being executed on the VM.
-     *
+     *获取正在VM上执行的cloudlet的<b>只读</b>列表。
      * @return the cloudlet execution list
      */
     List<CloudletExecution> getCloudletExecList();
 
     /**
      * Gets a <b>read-only</b> List of cloudlet waiting to be executed on the VM.
-     *
+     *获取一个<b>只读</b> cloudlet列表，等待在VM上执行的列表。
      * @return the cloudlet waiting list
      */
     List<CloudletExecution> getCloudletWaitingList();
@@ -143,7 +147,7 @@ public interface CloudletScheduler extends Serializable {
     boolean isEmpty();
 
     /**
-     * Releases a given number of PEs from a VM.
+     * Releases a given number of PEs from a VM.从VM释放给定数量的PEs。
      *
      * @param pesToRemove number of PEs to deallocate
      */

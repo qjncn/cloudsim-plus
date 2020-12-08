@@ -42,6 +42,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
+import org.cloudsimplus.listeners.CloudletVmEventInfo;
 import org.cloudsimplus.listeners.EventInfo;
 
 import java.util.ArrayList;
@@ -75,18 +76,18 @@ import java.util.function.Function;
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 4.2.0
  */
-public class HostActivationExample {
+public class MyHostActivationExample {
     /**
      * Defines, between other things, the time intervals
      * to keep Hosts CPU utilization history records.
      */
-    private static final int SCHEDULING_INTERVAL = 2;   //2秒
+    private static final int SCHEDULING_INTERVAL = 300;   //300秒
 
-    private static final int HOSTS = 5;                 //上面不是说用3个？
+    private static final int HOSTS = 15;                 //
     private static final int HOST_PES = 8;              //
 
-    private static final int MAX_VMS = 6;               //200
-    private static final int VM_PES = 4;                //需要修改成1
+    private static final int MAX_VMS = 200;               //200
+    private static final int VM_PES = 1;                //需要修改成1
     private static final int VM_MIPS = 1000;
 
     private static final int CLOUDLET_LENGTH = 20000;
@@ -100,10 +101,10 @@ public class HostActivationExample {
     private long currentActiveHosts;
 
     public static void main(String[] args) {
-        new HostActivationExample();
+        new MyHostActivationExample();
     }
 
-    private HostActivationExample() {
+    private MyHostActivationExample() {
         /*Enables just some level of log messages.
           Make sure to import org.cloudsimplus.util.Log;*/
         //Log.setLevel(ch.qos.logback.classic.Level.WARN);
@@ -116,7 +117,7 @@ public class HostActivationExample {
         cloudletList = new ArrayList<>(MAX_VMS);
         createAndSubmitVmsAndCloudlets(1);//creat一个初始的vm和cloudlet分别加到全局vmlist和cloudletlist，并且注册到broker0
         simulation.addOnClockTickListener(this::clockTickListener);//这步骤创建了一个VM
-
+        //cloudlet0.addOnFinishListener(this::submitNewVmsAndCloudletsToBroker)
         simulation.start();//sim开始，处理全部event
 
         final List<Cloudlet> finishedCloudlets = broker0.getCloudletFinishedList();
@@ -136,8 +137,8 @@ public class HostActivationExample {
         final DatacenterBrokerSimple broker = new DatacenterBrokerSimple(simulation);
 
         /*Indicates that idle VMs must be destroyed right away (0 delay).
-        * 指示必须立即销毁空闲vm(0延迟)。这迫使主机也变为空闲
-        * This forces the Host to become idle*/
+         * 指示必须立即销毁空闲vm(0延迟)。这迫使主机也变为空闲
+         * This forces the Host to become idle*/
         broker.setVmDestructionDelay(0.0);
         return broker;
     }
@@ -179,6 +180,7 @@ public class HostActivationExample {
         System.out.println();
     }
 
+    //修改成300秒创建一批，参考submitNewVmsAndCloudletsToBroker
     private void createAndSubmitVmsAndCloudlets(final int vmNumber) {
         final List<Vm> newVmList = new ArrayList<>(vmNumber);
         final List<Cloudlet> newCloudletList = new ArrayList<>(vmNumber);
@@ -196,6 +198,17 @@ public class HostActivationExample {
         broker0.submitVmList(newVmList);
         broker0.submitCloudletList(newCloudletList);
     }
+    //动态创建任务
+    private void submitNewVmsAndCloudletsToBroker(CloudletVmEventInfo eventInfo) {
+        final int numberOfNewVms = 2; //这个应该是从data读取的变量，随300s时间变化
+        final int numberOfCloudletsByVm = 1;
+        System.out.printf(
+            "%n\t# Cloudlet %d finished. Submitting %d new VMs to the broker%n",
+            eventInfo.getCloudlet().getId(), numberOfNewVms);
+
+        createAndSubmitVmsAndCloudlets(numberOfNewVms);
+
+    }
 
     private Datacenter createDatacenter() {
         final List<Host> hostList = new ArrayList<>(HOSTS);
@@ -204,7 +217,7 @@ public class HostActivationExample {
             hostList.add(host);
         }
 
-        final DatacenterSimple dc = new DatacenterSimple(simulation, hostList, new VmAllocationPolicyBestFit());
+        final DatacenterSimple dc = new DatacenterSimple(simulation, hostList, new VmAllocationPolicyBestFit());//bestfit策略
         dc.setSchedulingInterval(SCHEDULING_INTERVAL);
         return dc;
     }
@@ -252,7 +265,8 @@ public class HostActivationExample {
          * 减少长度，让第一个创建的cloudlet运行得更久，确保生成正长度(具有负长度的cloudlet无限期运行，直到显式地停止
          */
 
-        final long len = Math.abs(CLOUDLET_LENGTH - cloudletList.size()*3000);//长度做了变化，需要修改，改成0.5-1.5之间的随机数也可以
+        //final long len = Math.abs(CLOUDLET_LENGTH - cloudletList.size()*3000);//长度做了变化，需要修改，改成0.5-1.5之间的随机数也可以
+        final long len = Math.round(CLOUDLET_LENGTH *(Math.random()+0.5)); //长度改成0.5-1.5范围变化
         final Cloudlet cloudlet = new CloudletSimple(len, VM_PES);
         cloudlet.setUtilizationModelCpu(new UtilizationModelFull());
         cloudlet.setUtilizationModelRam(utilizationModel);

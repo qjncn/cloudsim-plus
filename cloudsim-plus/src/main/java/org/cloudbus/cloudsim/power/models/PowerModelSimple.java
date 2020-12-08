@@ -14,6 +14,7 @@ import java.util.function.UnaryOperator;
  * and {@link PowerModelSqrt}.</p>
  *
  * @author Manoel Campos da Silva Filho
+ * d
  * @since CloudSim Plus 2.1.0
  */
 public class PowerModelSimple extends PowerModelAbstract {

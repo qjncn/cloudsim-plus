@@ -38,6 +38,10 @@ import java.util.SortedMap;
  * Pattern in order to start avoiding {@link NullPointerException}
  * when using the {@link Host#NULL} object instead
  * of attributing {@code null} to {@link Host} variables.
+ * 提供的每个类要实现的接口
+ * 物理机器(主机)特性。
+ * 该接口实现空对象设计模式，以便在使用{@link Host# Null}对象
+ * 而不是将{@code Null}属性赋给{@link Host}变量时开始避免{@link NullPointerException}。
  *
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov
@@ -50,12 +54,14 @@ public interface Host extends Machine, Comparable<Host> {
     /**
      * The default value for the {@link #getIdleShutdownDeadline()}.
      * This value indicates that the Host won't be shutdown when becoming idle.
+     * {@link #getIdleShutdownDeadline()}的默认值
+     * 此值-1指示主机在变为空闲时不会关闭。
      */
     double DEF_IDLE_SHUTDOWN_DEADLINE = -1;
 
     /**
      * An attribute that implements the Null Object Design Pattern for {@link Host}
-     * objects.
+     * objects.为{@link Host}对象实现空对象设计模式的属性。
      */
     Host NULL = new HostNull();
 
@@ -77,7 +83,9 @@ public interface Host extends Machine, Comparable<Host> {
      * Checks if the host is suitable for vm
      * (if it has enough resources to attend the VM)
      * and it's not failed.
-     *
+     **检查主机是否适合vm
+     * *(如果它有足够的资源进入VM)
+     * *它没有失败。
      * @param vm the vm to check
      * @return true if is suitable for vm, false otherwise
      */
@@ -86,12 +94,18 @@ public interface Host extends Machine, Comparable<Host> {
     /**
      * Checks if the Host is powered-on or not.
      * @return true if the Host is powered-on, false otherwise.
+     * 检查主机是否通电。
+     * * @如果主机是通电的，返回true，否则返回false。
+     *
      */
     boolean isActive();
 
     /**
      * Checks if the Host has ever started sometime,
      * i.e., if it was active sometime in the simulation execution.
+     * 检查主机是否曾经启动过，
+     * *例如，如果它在模拟执行的某个时候是活动的。
+     *
      * @return
      */
     boolean hasEverStarted();

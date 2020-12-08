@@ -164,7 +164,7 @@ public class CloudSim implements Simulation {
      */
     private boolean alreadyRunOnce;
 
-    private final Set<EventListener<SimEvent>> onEventProcessingListeners;
+    private final Set<EventListener<SimEvent>> onEventProcessingListeners;  //泛型，集合-不允许有重复的元素。
     private final Set<EventListener<EventInfo>> onSimulationPauseListeners;
     private final Set<EventListener<EventInfo>> onClockTickListeners;
     private final Set<EventListener<EventInfo>> onSimulationStartListeners;
@@ -994,7 +994,7 @@ public class CloudSim implements Simulation {
 
     @Override
     public Simulation addOnClockTickListener(final EventListener<EventInfo> listener) {
-        onClockTickListeners.add(requireNonNull(listener));
+        onClockTickListeners.add(requireNonNull(listener));//onClockTickListeners是全局范围的一个集合，本句即添加到集合中
         return this;
     }
 

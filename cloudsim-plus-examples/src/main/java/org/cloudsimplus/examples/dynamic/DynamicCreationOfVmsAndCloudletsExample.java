@@ -52,15 +52,22 @@ import java.util.List;
 
 /**
  * An example showing how to dynamically create VMs and Cloudlets during simulation
- * executing using the exclusive CloudSim Plus {@link DatacenterBroker} implementations
- * and Listener features. Using such features, <b>it is not required to create DatacenterBrokers in runtime
- * in order to allow dynamic submission of VMs and Cloudlets.</b>
+ *  * executing using the exclusive CloudSim Plus {@link DatacenterBroker} implementations
+ *  * and Listener features. Using such features, <b>it is not required to create DatacenterBrokers in runtime
+ *  * in order to allow dynamic submission of VMs and Cloudlets.</b>
+ *  演示如何在模拟过程中动态创建vm和cloudlet的示例
+ *  *使用CloudSim + {@link DatacenterBroker}实现执行
+ *  *和侦听器特性。使用这些特性，<b>不需要在运行时创建DatacenterBrokers
+ *  *以允许虚拟机和cloudlet的动态提交
  *
  * <p>This example uses CloudSim Plus Listener features to intercept when
  * the first Cloudlet finishes its execution to then request
  * the creation of new VMs and Cloudlets. It uses the Java 8 Lambda Functions features
  * to pass a listener to the mentioned Cloudlet, by means of the
  * {@link Cloudlet#addOnFinishListener(EventListener)} method.</p>
+ *  这个示例使用CloudSimPlus侦听器特性在第一个Cloudlet完成执行时进行拦截，
+ *  然后请求创建新的vm和Cloudlet。它使用Java 8 Lambda函数特性通过
+ *  {@link Cloudlet#addOnFinishListener(EventListener)}方法向所提到的Cloudlet传递一个监听器。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0
@@ -105,12 +112,13 @@ public class DynamicCreationOfVmsAndCloudletsExample {
         final int cloudletsToCreateByVm = 2;
         this.vmList = new ArrayList<>(vmsToCreate);
         this.cloudletList = new ArrayList<>(vmsToCreate*cloudletsToCreateByVm);
-        createAndSubmitVmsAndCloudlets(vmsToCreate, cloudletsToCreateByVm);
+        createAndSubmitVmsAndCloudlets(vmsToCreate, cloudletsToCreateByVm);//此后vmList，cloudletList已经被创建完成，且已经满
 
         /* Assigns an EventListener to be notified when the first Cloudlets finishes executing
-        * and then dynamically create a new list of VMs and Cloudlets to submit to the broker.*/
+        * and then dynamically create a new list of VMs and Cloudlets to submit to the broker.
+        * 分配一个EventListener，当第一个cloudlet完成执行时通知它，然后动态创建一个新的vm和cloudlet列表，提交给代理*/
         Cloudlet cloudlet0 = this.cloudletList.get(0);
-        cloudlet0.addOnFinishListener(this::submitNewVmsAndCloudletsToBroker);
+        cloudlet0.addOnFinishListener(this::submitNewVmsAndCloudletsToBroker);//完成0号cloudlet之后又创造2个vm和8个cloudlet
 
         /* Starts the simulation and waits all cloudlets to be executed. */
         simulation.start();
