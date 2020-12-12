@@ -38,6 +38,8 @@ import static java.util.stream.Collectors.toList;
  * Implements the basic features of a Virtualized Cloud Datacenter. It deals
  * with processing of VM queries (i.e., handling of VMs) instead of processing
  * Cloudlet-related queries.
+ * 实现虚拟化云数据中心的基本功能。它处理VM查询的处理(即VM的处理)，而不是处理与Cloudlet相关的查询。
+ *
  *
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov
@@ -47,11 +49,16 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 
     /**
      * The last time some Host on the Datacenter was under or overloaded.
+     * 上次数据中心的主机过载或不足。
      *
      * <p>Double.MIN_VALUE is surprisingly not a negative number.
      * Initializing this attribute with a too small value makes that the first
      * time an under or overload condition is detected,
      * it will try immediately to find suitable Hosts for migration.</p>
+     * <p>Double.MIN_VALUE令人惊讶地不是一个负数。
+     * 用太小的值初始化此属性会使第一次检测到欠载或过载条件，
+     * 它会立即尝试寻找合适的主机进行迁移
+     *
      */
     private double lastTimeUnderOrOverloadedHostsDetected = -Double.MAX_VALUE;
 
@@ -62,6 +69,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 
     /**
      * Indicates if migrations are disabled or not.
+     * 指示迁移是否被禁用。
      */
     private boolean migrationsEnabled;
 
@@ -77,7 +85,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     private double lastProcessTime;
 
 
-    /** @see #getSchedulingInterval() */
+    /** @see #getSchedulingInterval() 调度间隔*/
     private double schedulingInterval;
 
     /** @see #getDatacenterStorage() */
@@ -100,11 +108,15 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     /**
      * Creates a Datacenter with an empty {@link #getDatacenterStorage() storage}
      * and a {@link VmAllocationPolicySimple} by default.
+     **创建一个数据中心，默认使用空的{@link #getDatacenterStorage() storage}和{@link VmAllocationPolicySimple}
      *
      * <p><b>NOTE:</b> To change such attributes, just call the respective setters.</p>
+     * 要更改这些属性，只需调用相应的setter。
      *
      * @param simulation The CloudSim instance that represents the simulation the Entity is related to
+     *                   表示与实体相关的模拟的CloudSim实例
      * @param hostList list of {@link Host}s that will compound the Datacenter
+     *                 组成数据中心的{@link Host}列表
      * @see #DatacenterSimple(Simulation, List, VmAllocationPolicy, DatacenterStorage)
      */
     public DatacenterSimple(final Simulation simulation, final List<? extends Host> hostList) {
@@ -330,6 +342,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     /**
      * Process a {@link CloudSimTags#VM_VERTICAL_SCALING} request, trying to scale
      * a Vm resource.
+     * *处理一个{@link CloudSimTags#VM_VERTICAL_SCALING}请求，试图扩展虚拟机资源。
      *
      * @param evt the received  {@link CloudSimTags#VM_VERTICAL_SCALING} event
      * @return true if the Vm was scaled, false otherwise
@@ -395,6 +408,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 
     /**
      * Processes a Cloudlet based on the event type.
+     * 基于事件类型处理Cloudlet。
      *
      * @param evt information about the event just happened
      * @param type event type
@@ -433,10 +447,13 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     }
     /**
      * Processes the submission of a Cloudlet by a DatacenterBroker.
+     * 处理由DatacenterBroker提交的Cloudlet。
      *
      * @param evt information about the event just happened
+     *            关于事件的信息刚刚发生
      * @param ack indicates if the event's sender expects to receive an
      * acknowledge message when the event finishes to be processed
+     *            指示事件的发送者是否希望在事件完成处理时收到确认消息
      */
     protected void processCloudletSubmit(final SimEvent evt, final boolean ack) {
         final Cloudlet cloudlet = (Cloudlet) evt.getData();
@@ -451,10 +468,12 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 
     /**
      * Submits a cloudlet to be executed inside its bind VM.
+     * 提交一个cloudlet在其绑定VM中执行。
      *
      * @param cloudlet the cloudlet to the executed
-     * @param ack indicates if the Broker is waiting for an ACK after the Datacenter
+     * @param ack indicates if the Broker is waiting for an ACK after the Datacenter表示在数据中心收到cloudlet提交后，代理是否在等待ack
      * receives the cloudlet submission
+     *
      */
     private void submitCloudletToVm(final Cloudlet cloudlet, final boolean ack) {
         // time to transfer cloudlet's files
@@ -479,12 +498,17 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * (if the scheduling interval is enable, i.e. if it's greater than 0),
      * which represents when the next update of Cloudlets processing
      * has to be performed.
+     * *获取必须执行下一次cloudlet更新的时间。
+     * *这是{@link #getSchedulingInterval()}和给定时间(如果调度间隔是启用的，即如果它大于0)之间的最小值，
+     * 表示何时需要执行cloudlet处理的下一次更新。
      *
      * @param nextFinishingCloudletTime the predicted completion time of the earliest finishing cloudlet
      * (which is a relative delay from the current simulation time),
      * or {@link Double#MAX_VALUE} if there is no next Cloudlet to execute
+     *                                  最早完成cloudlet的预计完成时间(相对于当前模拟时间而言是相对延迟)，
+     *                                  或者如果没有下一个cloudlet执行，则为{@link Double#MAX_VALUE}
      * @return next time cloudlets processing will be updated (a relative delay from the current simulation time)
-     *
+     *         下一次更新cloudlet处理时(当前模拟时间的相对延迟)
      * @see #updateCloudletProcessing()
      */
     protected double getCloudletProcessingUpdateInterval(final double nextFinishingCloudletTime){
@@ -499,6 +523,8 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
          * If there is an event happening before such a time, then the event
          * will be scheduled as usual. Otherwise, the update
          * is scheduled to the next time multiple of the scheduling interval.*/
+        /*如果设置了调度间隔，确保cloudlet的处理更新的下一次时间是调度间隔的多个时间。
+         如果在此时间之前发生了某一事件，则该事件将照常安排。否则，更新被安排到调度间隔的下一个时间的多个倍。*/
         final double delay = mod == 0 ? schedulingInterval : (time - mod + schedulingInterval) - time;
         return Math.min(nextFinishingCloudletTime, delay);
     }
@@ -508,7 +534,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     }
 
     /**
-     * Processes a Cloudlet resume request.
+     * Processes a Cloudlet resume request.处理Cloudlet恢复请求。
      *
      * @param cloudlet cloudlet to be resumed
      * @param ack indicates if the event's sender expects to receive an
@@ -534,7 +560,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     }
 
     /**
-     * Processes a Cloudlet pause request.
+     * Processes a Cloudlet pause request. 处理Cloudlet暂停请求。
      *
      * @param cloudlet cloudlet to be paused
      * @param ack indicates if the event's sender expects to receive an
@@ -546,7 +572,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
     }
 
     /**
-     * Processes a Cloudlet cancel request.
+     * Processes a Cloudlet cancel request. 处理Cloudlet取消请求。
      *
      * @param cloudlet cloudlet to be canceled
      */
@@ -559,6 +585,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * Process the event for a Broker which wants to create a VM in this
      * Datacenter. This Datacenter will then send the status back to
      * the Broker.
+     *处理一个代理的事件，该代理希望在这个数据中心创建一个VM。然后，该数据中心将把状态发送回代理。
      *
      * @param evt information about the event just happened
      * acknowledge message when the event finishes to be processed
@@ -574,6 +601,8 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
 
         /* Acknowledges that the request was received by the Datacenter,
           (the broker is expecting that if the Vm was created or not). */
+        /*确认该请求已被数据中心接收，
+          (代理希望知道是否创建了Vm)。*/
         send(vm.getBroker(), getSimulation().getMinTimeBetweenEvents(), CloudSimTags.VM_CREATE_ACK, vm);
 
         return hostAllocatedForVm;
@@ -583,6 +612,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * Process the event sent by a Broker, requesting the destruction of a given VM
      * created in this Datacenter. This Datacenter may send, upon
      * request, the status back to the Broker.
+     *处理由代理发送的事件，请求销毁在该数据中心创建的给定VM。该数据中心可以根据请求将状态发送回代理。
      *
      * @param evt information about the event just happened
      * @param ack indicates if the event's sender expects to receive an
@@ -715,6 +745,8 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * Updates the processing of all Hosts, meaning
      * it makes the processing of VMs running inside such hosts to be updated.
      * Finally, the processing of Cloudlets running inside such VMs is updated too.
+     * 更新所有主机的处理，这意味着它将更新在此类主机内运行的vm的处理。
+     * 最后，运行在虚拟机内的cloudlet的处理也被更新。
      *
      * @return the predicted completion time of the earliest finishing cloudlet
      * (which is a relative delay from the current simulation time),
@@ -727,7 +759,7 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
             nextSimulationDelay = Math.min(delay, nextSimulationDelay);
         }
 
-        // Guarantees a minimal interval before scheduling the event
+        // Guarantees a minimal interval before scheduling the event保证调度事件之前的最小间隔
         final double minTimeBetweenEvents = getSimulation().getMinTimeBetweenEvents()+0.01;
         nextSimulationDelay = nextSimulationDelay == 0 ? nextSimulationDelay : Math.max(nextSimulationDelay, minTimeBetweenEvents);
 
@@ -747,6 +779,10 @@ public class DatacenterSimple extends CloudSimEntity implements Datacenter {
      * It is necessary because Hosts and VMs are simple objects, not
      * entities. So, they don't receive events and updating cloudlets inside
      * them must be called from the outside.
+     * 更新每个主机的处理，触发VMs的更新，从而更新在这个数据中心运行的cloudlet。
+     * 之后，该方法安排下一个处理更新。
+     * 这是必要的，因为主机和虚拟机是简单对象，而不是实体。因此，它们不接收事件，也不更新内部的cloudlet
+     * *必须从外面叫他们。
      *
      * @return the predicted completion time of the earliest finishing cloudlet
      * (which is a relative delay from the current simulation time),

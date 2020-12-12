@@ -79,6 +79,8 @@ public class DatacenterBrokerHeuristic extends DatacenterBrokerSimple {
 
         //If user didn't bind this cloudlet and it has not been executed yet,
         //gets the Vm for the Cloudlet from the heuristic solution.
+        //用户如果不绑定cloudlet，并且还没有执行，就从启发方法中得到mapping的Vm
+        //下面长串函数的含义：取得启发算法的最佳值.取得结果.或者赋予默认值，总之就是得到算法的Vm结果
         return heuristic.getBestSolutionSoFar().getResult().getOrDefault(cloudlet, fallbackVm);
     }
 

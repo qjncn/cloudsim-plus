@@ -31,6 +31,8 @@ import org.cloudbus.cloudsim.vms.Vm;
  * to {@link EventListener} objects that are registered to be notified
  * when some events happen for a given {@link Cloudlet}
  * running inside a {@link Vm}.
+ * *一个接口，表示要传递给{@link EventListener}对象的数据，
+ * 当运行在{@link Vm}中的给定{@link Cloudlet}发生某些事件时，注册的对象会得到通知。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0
@@ -42,11 +44,14 @@ public interface CloudletVmEventInfo extends CloudletEventInfo, VmEventInfo {
     /**
      * Gets a CloudletVmEventInfo instance from the given parameters.
      * The {@link #getTime()} is the current simulation time.
+     * *从给定参数中获取一个CloudletVmEventInfo实例。
+     * * {@link #getTime()}是当前模拟时间。
      *
-     * @param listener the listener to be notified about the event
-     * @param cloudlet the {@link Cloudlet} that fired the event
+     * @param listener the listener to be notified about the event要被通知事件的侦听器
+     * @param cloudlet the {@link Cloudlet} that fired the event 触发事件的{@link Cloudlet}
      * @param vm the {@link Vm} where the Cloudlet is or was running into,
      *            depending on the fired event, such as the
+     *            Cloudlet所在或正在运行的{@link Vm}，取决于触发的事件，例如
      *            {@link Cloudlet#addOnUpdateProcessingListener(EventListener) OnUpdateCloudletProcessing}
      *           or {@link Cloudlet#addOnFinishListener(EventListener) OnCloudletFinish}
      */
@@ -58,6 +63,8 @@ public interface CloudletVmEventInfo extends CloudletEventInfo, VmEventInfo {
      * Gets a CloudletVmEventInfo instance from the given parameters.
      * The {@link #getVm() Vm} attribute is defined as the {@link Vm} where the {@link Cloudlet}
      * is running.
+     * *从给定参数中获取一个CloudletVmEventInfo实例。
+     * * {@link #getVm() Vm}属性被定义为运行{@link Cloudlet}的{@link Vm}。
      *
      * @param time the time the event happened
      * @param cloudlet the {@link Cloudlet} that fired the event

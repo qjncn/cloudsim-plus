@@ -30,7 +30,6 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.datacenters.Datacenter;
-import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
@@ -123,6 +122,7 @@ public class CloudletListenersExample1 {
     /**
      * A Listener function that will be called every time a cloudlet
      * starts running into a VM. All cloudlets will use this same listener.
+     **一个侦听器函数，每次cloudlet运行到VM时都会调用它。所有cloudlet都将使用相同的侦听器。
      *
      * @param eventInfo information about the happened event
      * @see #createCloudlet(long, Vm, long)
@@ -136,6 +136,7 @@ public class CloudletListenersExample1 {
     /**
      * A Listener function that will be called every time a cloudlet
      * finishes running into a VM. All cloudlets will use this same listener.
+     *一个侦听器函数，每次cloudlet运行到VM中时都会调用它。所有cloudlet都将使用相同的侦听器。
      *
      * @param eventInfo information about the happened event
      * @see #createCloudlet(long, Vm, long)

@@ -31,7 +31,6 @@ import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.datacenters.Datacenter;
-import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.hosts.Host;
@@ -110,6 +109,7 @@ public class RandomCloudletsArrivalExample {
     private static final int CLOUDLET_LENGTH = 10000;
     /**
      * Number of Cloudlets to be statically created when the simulation starts.
+     * 在模拟开始时静态创建的cloudlet的数量。
      */
     private static final int INITIAL_CLOUDLETS_NUMBER = 5;
 
@@ -232,6 +232,9 @@ public class RandomCloudletsArrivalExample {
      * Simulates the dynamic arrival of Cloudlets, randomly during simulation runtime.
      * At any time the simulation clock updates, a new Cloudlet will be
      * created with a probability of 30%.
+     * *在模拟运行时随机模拟cloudlet的动态到达。
+     * *每当模拟时钟更新时，一个新的Cloudlet就会出现
+     * *创建概率为30%。
      *
      * @param evt
      */

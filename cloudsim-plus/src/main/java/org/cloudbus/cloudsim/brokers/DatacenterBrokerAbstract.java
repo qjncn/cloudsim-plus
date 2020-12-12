@@ -49,6 +49,13 @@ public abstract class DatacenterBrokerAbstract extends CloudSimEntity implements
      * <li>all submitted Cloudlets from all its VMs are finished and there are no waiting Cloudlets;</li>
      * <li>or all running Cloudlets are finished and there are some of them waiting their VMs to be created.</li>
      * </ul>
+     * *默认的{@link Function}，它总是返回{@link #DEF_VM_DESTRUCTION_DELAY}，表示任何VM在空闲后不应该立即销毁。
+     * *这样，使用这个功能，代理将销毁虚拟机只有以下:
+     * * < ul >
+     * * <li>所有vm中提交的cloudlet都已完成，没有等待的cloudlet;</li>
+     * * <li>或者所有运行的cloudlet都完成了，其中一些正在等待创建它们的vm
+     * * < / ul >
+     *
      *
      * @see #setVmDestructionDelayFunction(Function)
      */
@@ -58,6 +65,8 @@ public abstract class DatacenterBrokerAbstract extends CloudSimEntity implements
      * A map of registered event listeners for the onVmsCreatedListeners event
      * that the key is the Listener itself and the value indicates if it's a one
      * time listener (which is removed from the list after being notified for the first time).
+     ** onVmsCreatedListeners事件的已注册事件监听器的映射，
+     * 键是监听器本身，值表示它是否为一次性监听器(在第一次被通知后从列表中删除)。
      *
      * @see #addOnVmsCreatedListener(EventListener)
      */

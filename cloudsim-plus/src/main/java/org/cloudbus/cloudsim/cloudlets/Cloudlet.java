@@ -766,6 +766,7 @@ public interface Cloudlet extends UniquelyIdentifiable, Comparable<Cloudlet>, Cu
     /**
      * Adds a Listener object that will be notified when
      * the Cloudlet starts executing in some {@link Vm}.
+     * 添加一个侦听器对象，当Cloudlet在某个{@link Vm}中开始执行时，该侦听器对象将被通知。
      *
      * @param listener the listener to add
      */

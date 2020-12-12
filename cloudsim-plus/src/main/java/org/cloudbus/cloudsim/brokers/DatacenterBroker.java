@@ -157,6 +157,8 @@ public interface DatacenterBroker extends SimEntity {
      * Submits a list of {@link Vm} or {@link VmGroup} that their creation inside a Host will be requested to some
      * {@link Datacenter}. The Datacenter that will be chosen to place a VM is
      * determined by the {@link #setDatacenterMapper(BiFunction)}.
+     * 向某个{@link数据中心}提交一个{@link Vm}或{@link VmGroup}的列表，请求它们在主机内创建。
+     * 选择用来放置VM的数据中心由{@link#setDatacenterMapper(BiFunction)}决定。
      *
      * <p>When a list of {@link VmGroup} is given, it will try to place all VMs from the same group into the same Host.</p>
      *

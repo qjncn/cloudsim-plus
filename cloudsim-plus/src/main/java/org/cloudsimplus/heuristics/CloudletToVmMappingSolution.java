@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 /**
  * A possible solution for mapping a set of Cloudlets to a set of Vm's.
  * It represents a solution generated using a {@link Heuristic} implementation.
+ * 将一组cloudlet映射到一组Vm的一个可能的解决方案。
+ * *它表示使用{@link启发式}实现生成的解决方案。
  *
  * @author Manoel Campos da Silva Filho
  * @see Heuristic
@@ -43,6 +45,8 @@ public class CloudletToVmMappingSolution implements HeuristicSolution<Map<Cloudl
      * there may be some precision issues. This value is used to check the absolute difference between the two values
      * to avoid that solutions with little decimal difference be
      * considered different one of the other.
+     * 当两个双精度值被减去以检查它们是否等于零时，可能会有一些精度问题。此值用于检查两个值之间的绝对差异，
+     * 以避免将小数差异很小的解决方案视为不同的解决方案。
      */
     public static final double MIN_DIFF = 0.0001;
 

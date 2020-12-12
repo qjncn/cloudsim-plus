@@ -30,7 +30,7 @@ import org.cloudbus.cloudsim.brokers.DatacenterBrokerHeuristic;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.datacenters.Datacenter;
+import org.cloudbus.cloudsim.datacenters.DatacenterQlearn;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
@@ -57,29 +57,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An example that uses a
- * <a href="http://en.wikipedia.org/wiki/Simulated_annealing">Simulated Annealing</a>
- * heuristic to find a suboptimal mapping between Cloudlets and Vm's submitted to a
- * DatacenterBroker. The number of {@link Pe}s of Vm's and Cloudlets are defined
- * randomly.
- * *使用<a href=" http://en.wikipedia.org/wiki/simulated_退火">模拟退火</a>启发式
- * 来发现提交给DatacenterBroker的Cloudlets和Vm之间的次优映射的示例。Vm和cloudlet的{@link Pe}的数量是随机定义的。
- *
- * <p>The {@link DatacenterBrokerHeuristic} is used
- * with the {@link CloudletToVmMappingSimulatedAnnealing} class
- * in order to find an acceptable solution with a high
- * {@link HeuristicSolution#getFitness() fitness value}.</p>
- * <p> {@link DatacenterBrokerHeuristic}与{@link CloudletToVmMappingSimulatedAnnealing}类一起使用，
- * 目的是找到一个具有高{@link HeuristicSolution#getFitness() fitness value}的可接受解决方案。</p
- *
- * <p>Different {@link CloudletToVmMappingHeuristic} implementations can be used
- * with the {@link DatacenterBrokerHeuristic} class.</p>
- *<p>不同的{@link CloudletToVmMappingHeuristic}实现可用于{@link DatacenterBrokerHeuristic}类。</p>
- *
- * @author Manoel Campos da Silva Filho
- * @since CloudSim Plus 1.0
+ * An example 用强化学习Qlearn算法找出
  */
-public class DatacenterBrokerHeuristicExample {
+public class DatacenterBrokerQlearnExample {
     private static final int HOSTS_TO_CREATE = 100;
     private static final int VMS_TO_CREATE = 50;
     private static final int CLOUDLETS_TO_CREATE = 100;
@@ -95,7 +75,7 @@ public class DatacenterBrokerHeuristicExample {
     private final CloudSim simulation;
     private final List<Cloudlet> cloudletList;
     private List<Vm> vmList;
-    private CloudletToVmMappingSimulatedAnnealing heuristic;
+    private CloudletToVmMappingQlearn Qlearn;
 
     /**
      * Number of cloudlets created so far.
@@ -115,13 +95,13 @@ public class DatacenterBrokerHeuristicExample {
      * @param args
      */
     public static void main(String[] args) {
-        new DatacenterBrokerHeuristicExample();
+        new DatacenterBrokerQlearnExample();
     }
 
     /**
      * Default constructor where the simulation is built.
      */
-    private DatacenterBrokerHeuristicExample() {
+    private DatacenterBrokerQlearnExample() {
         //Enables just some level of log messages.
         Log.setLevel(Level.WARN);
 
@@ -131,9 +111,9 @@ public class DatacenterBrokerHeuristicExample {
 
         simulation = new CloudSim();
 
-        final Datacenter datacenter0 = createDatacenter();
+        final DatacenterQlearn datacenter0 = createDatacenter();
 
-        DatacenterBrokerHeuristic broker0 = createBroker();
+        DatacenterBrokerQlearn broker0 = createBroker();
 
         createAndSubmitVms(broker0);
         createAndSubmitCloudlets(broker0);
@@ -146,55 +126,55 @@ public class DatacenterBrokerHeuristicExample {
         print(broker0);
     }
 
-	private DatacenterBrokerHeuristic createBroker() {
-		createSimulatedAnnealingHeuristic(); //构建算法对象，以初始化该启发mapping算法的参数
-		final DatacenterBrokerHeuristic broker0 = new DatacenterBrokerHeuristic(simulation);
-		broker0.setHeuristic(heuristic);
-		return broker0;
-	}
+    private DatacenterBrokerQlearn createBroker() {
+        createQlearn();
+        final DatacenterBrokerHeuristic broker0 = new DatacenterBrokerHeuristic(simulation);
+        broker0.setQlearn(Qlearn);
+        return broker0;
+    }
 
-	private void createAndSubmitCloudlets(final DatacenterBrokerHeuristic broker0) {
-		for(int i = 0; i < CLOUDLETS_TO_CREATE; i++){
-		    cloudletList.add(createCloudlet(broker0, getRandomPesNumber(4)));
-		}
-		broker0.submitCloudletList(cloudletList);
-	}
+    private void createAndSubmitCloudlets(final DatacenterBrokerQlearn broker0) {
+        for(int i = 0; i < CLOUDLETS_TO_CREATE; i++){
+            cloudletList.add(createCloudlet(broker0, getRandomPesNumber(4)));
+        }
+        broker0.submitCloudletList(cloudletList);
+    }
 
-	private void createAndSubmitVms(final DatacenterBrokerHeuristic broker0) {
-		vmList = new ArrayList<>(VMS_TO_CREATE);
-		for(int i = 0; i < VMS_TO_CREATE; i++){
-		    vmList.add(createVm(broker0, getRandomPesNumber(4)));
-		}
-		broker0.submitVmList(vmList);
-	}
-    //初始化map算法的参数
-	private void createSimulatedAnnealingHeuristic() {
-		heuristic =
-		        new CloudletToVmMappingSimulatedAnnealing(SA_INITIAL_TEMPERATURE, new UniformDistr(0, 1));
-		heuristic.setColdTemperature(SA_COLD_TEMPERATURE);
-		heuristic.setCoolingRate(SA_COOLING_RATE);
-		heuristic.setNeighborhoodSearchesByIteration(SA_NUMBER_OF_NEIGHBORHOOD_SEARCHES);
-	}
+    private void createAndSubmitVms(final DatacenterBrokerQlearn broker0) {
+        vmList = new ArrayList<>(VMS_TO_CREATE);
+        for(int i = 0; i < VMS_TO_CREATE; i++){
+            vmList.add(createVm(broker0, getRandomPesNumber(4)));
+        }
+        broker0.submitVmList(vmList);
+    }
+    //创建算法Qlearn对象
+    private void createQlearn() {
+        Qlearn =
+            new CloudletToVmMappingQlearn(SA_INITIAL_TEMPERATURE, new UniformDistr(0, 1));
+        Qlearn.setColdTemperature(SA_COLD_TEMPERATURE);
+        Qlearn.setCoolingRate(SA_COOLING_RATE);
+        Qlearn.setNeighborhoodSearchesByIteration(SA_NUMBER_OF_NEIGHBORHOOD_SEARCHES);
+    }
 
-	private void print(final DatacenterBrokerHeuristic broker0) {
+    private void print(final DatacenterBrokerHeuristic broker0) {
         final double roundRobinMappingCost = computeRoundRobinMappingCost();
-		printSolution(
-		        "Heuristic solution for mapping cloudlets to Vm's         ",
-		        heuristic.getBestSolutionSoFar(), false);
+        printSolution(
+            "Heuristic solution for mapping cloudlets to Vm's         ",
+            heuristic.getBestSolutionSoFar(), false);
 
-		System.out.printf(
-		    "\tThe heuristic solution cost represents %.2f%% of the round robin mapping cost used by the DatacenterBrokerSimple%n",
-		    heuristic.getBestSolutionSoFar().getCost()*100.0/roundRobinMappingCost);
-		System.out.printf("\tThe solution finding spend %.2f seconds to finish%n", broker0.getHeuristic().getSolveTime());
-		System.out.println("\tSimulated Annealing Parameters");
+        System.out.printf(
+            "\tThe heuristic solution cost represents %.2f%% of the round robin mapping cost used by the DatacenterBrokerSimple%n",
+            heuristic.getBestSolutionSoFar().getCost()*100.0/roundRobinMappingCost);
+        System.out.printf("\tThe solution finding spend %.2f seconds to finish%n", broker0.getHeuristic().getSolveTime());
+        System.out.println("\tSimulated Annealing Parameters");
         System.out.printf("\t\tNeighborhood searches by iteration: %d%n", SA_NUMBER_OF_NEIGHBORHOOD_SEARCHES);
         System.out.printf("\t\tInitial Temperature: %18.6f%n", SA_INITIAL_TEMPERATURE);
         System.out.printf("\t\tCooling Rate       : %18.6f%n", SA_COOLING_RATE);
         System.out.printf("\t\tCold Temperature   : %18.6f%n%n", SA_COLD_TEMPERATURE);
         System.out.println(getClass().getSimpleName() + " finished!");
-	}
+    }
 
-	/**
+    /**
      * Randomly gets a number of PEs (CPU cores).
      *
      * @param maxPesNumber the maximum value to get a random number of PEs
@@ -225,10 +205,10 @@ public class DatacenterBrokerHeuristicExample {
         for(int i = 0; i < 8; i++)
             peList.add(new PeSimple(mips, new PeProvisionerSimple()));
 
-       return new HostSimple(ram, bw, storage, peList)
-                   .setRamProvisioner(new ResourceProvisionerSimple())
-                   .setBwProvisioner(new ResourceProvisionerSimple())
-                   .setVmScheduler(new VmSchedulerTimeShared());
+        return new HostSimple(ram, bw, storage, peList)
+            .setRamProvisioner(new ResourceProvisionerSimple())
+            .setBwProvisioner(new ResourceProvisionerSimple())
+            .setVmScheduler(new VmSchedulerTimeShared());
     }
 
     private Vm createVm(final DatacenterBroker broker, final int pesNumber) {
@@ -251,11 +231,11 @@ public class DatacenterBrokerHeuristicExample {
         final UtilizationModel utilizationDynamic = new UtilizationModelDynamic(0.1);
 
         return new CloudletSimple(createdCloudlets++, length, numberOfPes)
-                    .setFileSize(fileSize)
-                    .setOutputSize(outputSize)
-                    .setUtilizationModelCpu(utilizationFull)
-                    .setUtilizationModelRam(utilizationDynamic)
-                    .setUtilizationModelBw(utilizationDynamic);
+            .setFileSize(fileSize)
+            .setOutputSize(outputSize)
+            .setUtilizationModelCpu(utilizationFull)
+            .setUtilizationModelRam(utilizationDynamic)
+            .setUtilizationModelBw(utilizationDynamic);
     }
 
     private double computeRoundRobinMappingCost() {
@@ -279,7 +259,7 @@ public class DatacenterBrokerHeuristicExample {
         final boolean showIndividualCloudletFitness)
     {
         System.out.printf("%n%s (cost %.2f fitness %.6f)%n",
-                title, solution.getCost(), solution.getFitness());
+            title, solution.getCost(), solution.getFitness());
         if(!showIndividualCloudletFitness)
             return;
 

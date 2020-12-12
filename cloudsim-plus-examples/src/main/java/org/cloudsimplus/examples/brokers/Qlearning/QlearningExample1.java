@@ -1,6 +1,6 @@
-package main;
+package org.cloudsimplus.examples.brokers.Qlearning;
 import java.util.Arrays;
-public class Qlearning{
+public class QlearningExample1 {
     //main
     public static void main(String[] args) {
         //Q表初始化

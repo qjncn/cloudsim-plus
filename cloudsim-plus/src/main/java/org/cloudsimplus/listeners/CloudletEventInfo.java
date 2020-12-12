@@ -29,6 +29,8 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
  * An interface that represents data to be passed
  * to {@link EventListener} objects that are registered to be notified
  * when some events happen for a given {@link Cloudlet}.
+ * *一个接口，表示要传递给{@link EventListener}对象的数据，
+ * 这些对象被注册为在某个给定的{@link Cloudlet}发生某些事件时被通知。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.0
@@ -38,6 +40,7 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 public interface CloudletEventInfo extends EventInfo {
     /**
      * Gets the {@link Cloudlet} for which the event happened.
+     * 获取事件发生的{@link Cloudlet}。
      * @return
      */
     Cloudlet getCloudlet();
