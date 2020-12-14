@@ -210,6 +210,9 @@ public interface DatacenterBroker extends SimEntity {
      * Just the Cloudlets that don't have a delay already assigned will have its submission delay changed.
      * All cloudlets will be added to the {@link #getCloudletWaitingList()},
      * setting their submission delay to the specified value.
+     * 向代理发送一个cloudlet列表，以便代理在给定的延迟之后请求在某个VM中创建它们。
+     * 只有没有分配延迟的Cloudles才会改变其提交延迟。
+     * 所有的 cloudlet将被添加到 {@link #getCloudletWaitingList()} 中，将它们的提交延迟设置为指定的值。
      *
      * @param list            the list of Cloudlets to request the creation
      * @param submissionDelay the delay the broker has to include when requesting the creation of Cloudlets

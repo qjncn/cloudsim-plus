@@ -58,7 +58,7 @@ import java.util.List;
  * it is used a CloudletSchedulerTimeShared, analyzing the output
  * you can see that each cloudlet starts in a different time,
  * simulating different arrivals.
- *演示如何延迟cloudlet提交的示例。
+ * 演示如何延迟cloudlet提交的示例。
  * 尽管有足够的资源同时运行所有的cloudlet，
  * *示例延迟了VM中每个cloudlet的创建，
  * *模拟cloudlet的动态到达。

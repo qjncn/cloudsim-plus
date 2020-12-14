@@ -104,7 +104,8 @@ public class DynamicCreationOfVmsAndCloudletsExample {
         Datacenter datacenter0 = createDatacenter();
 
         /*Creates a Broker accountable for submission of VMs and Cloudlets
-        on behalf of a given cloud user (customer).*/
+        on behalf of a given cloud user (customer).
+        创建一个代理，负责代表给定的云用户(客户)提交vm和cloudlet*/
         broker0 = new DatacenterBrokerSimple(simulation);
 
         final int vmsToCreate = 1;
@@ -151,7 +152,7 @@ public class DynamicCreationOfVmsAndCloudletsExample {
     /**
      * Dynamically creates and submits a set of VMs to the broker when
      * the first cloudlet finishes.
-     * @param eventInfo information about the fired event
+     * @param eventInfo information about the fired event 触发事件，cloudlet0，(重点)
      */
     private void submitNewVmsAndCloudletsToBroker(CloudletVmEventInfo eventInfo) {
         final int numberOfNewVms = 2;

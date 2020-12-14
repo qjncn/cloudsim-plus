@@ -1,6 +1,6 @@
 package org.cloudbus.cloudsim.datacenters;
 
-import com.sun.tools.sjavac.Log;
+import com.sun.tools.javac.Log;
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
@@ -8,7 +8,7 @@ import org.cloudbus.cloudsim.hosts.Host;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
+
 
 
 /**
@@ -19,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
  * 3覆盖processOtherEvent，以检测定期事件并为其调用处理程序
  * 4实现处理程序方法。最终，此方法还计划该事件的下一个调用。
  */
-class DatacenterQlearn extends DatacenterSimple {
+public class DatacenterQlearn extends DatacenterSimple {
     //choose any unused value you want to represent the tag.
     public static final int PERIODIC_EVENT = 12345;
+
+    public DatacenterQlearn(){}
 
     @Override
     protected void processOtherEvent(SimEvent ev) {

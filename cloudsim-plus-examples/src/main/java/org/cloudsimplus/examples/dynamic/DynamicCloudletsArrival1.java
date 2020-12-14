@@ -135,6 +135,7 @@ public class DynamicCloudletsArrival1 {
     /**
      * Creates cloudlets and submit them to the broker, applying
      * a submission delay for each one (simulating the dynamic cloudlet arrival).
+     * *创建cloudlet并将它们提交给代理，为每个cloudlet应用提交延迟(模拟动态cloudlet到达)。
      *
      * @param vm Vm to run the cloudlets to be created
      * @param submissionDelay the delay the broker has to include when submitting the Cloudlets

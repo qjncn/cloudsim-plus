@@ -10,14 +10,14 @@ import java.util.Comparator;
 /**
  *
  */
-public class DatacenterBrokerBestFit extends DatacenterBrokerSimple {
+public class DatacenterBrokerQlearn extends DatacenterBrokerSimple {
 
     /**
      * Creates a DatacenterBroker object.
      *
      * @param simulation The CloudSim instance that represents the simulation the Entity is related to
      */
-    public DatacenterBrokerBestFit(final CloudSim simulation) {
+    public DatacenterBrokerQlearn(final CloudSim simulation) {
         super(simulation);
     }
 
@@ -36,7 +36,7 @@ public class DatacenterBrokerBestFit extends DatacenterBrokerSimple {
         if (cloudlet.isBoundToVm()) {
             return cloudlet.getVm();
         }
-        //todo:添加方法
+        //todo:添加调用的方法 getMappedVm
         CloudletToVmMappingQlearn Qlearn;
         final Vm mappedVm = Qlearn.getMappedVm(cloudlet);
 

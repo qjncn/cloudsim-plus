@@ -31,6 +31,7 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.datacenters.DatacenterQlearn;
+import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.distributions.UniformDistr;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
@@ -46,10 +47,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
-import org.cloudsimplus.heuristics.CloudletToVmMappingHeuristic;
-import org.cloudsimplus.heuristics.CloudletToVmMappingSimulatedAnnealing;
-import org.cloudsimplus.heuristics.CloudletToVmMappingSolution;
-import org.cloudsimplus.heuristics.HeuristicSolution;
+import org.cloudsimplus.heuristics.*;
 import org.cloudsimplus.util.Log;
 
 import java.util.ArrayList;
@@ -111,7 +109,7 @@ public class DatacenterBrokerQlearnExample {
 
         simulation = new CloudSim();
 
-        final DatacenterQlearn datacenter0 = createDatacenter();
+        final DatacenterSimple datacenter0 = createDatacenter();
 
         DatacenterBrokerQlearn broker0 = createBroker();
 
@@ -181,16 +179,16 @@ public class DatacenterBrokerQlearnExample {
      * @return the randomly generated PEs number
      */
     private int getRandomPesNumber(final int maxPesNumber) {
-        return heuristic.getRandomValue(maxPesNumber)+1;
+        return Qlearn.getRandomValue(maxPesNumber)+1;
     }
 
-    private DatacenterSimple createDatacenter() {
+    private DatacenterQlearn createDatacenter() {
         final List<Host> hostList = new ArrayList<>();
         for(int i = 0; i < HOSTS_TO_CREATE; i++) {
             hostList.add(createHost());
         }
 
-        return new DatacenterSimple(simulation, hostList, new VmAllocationPolicySimple());
+        return new DatacenterQlearn(simulation, hostList, new VmAllocationPolicySimple());
     }
 
     private Host createHost() {
