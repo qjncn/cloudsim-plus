@@ -30,6 +30,7 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.datacenters.Datacenter;
+import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
@@ -54,6 +55,8 @@ import java.util.function.Function;
  * A example showing how to create VMs and Cloudlets
  * for multiple customers, each one represented
  * by a {@link DatacenterBroker} object.
+ * 演示如何为多个客户创建 vm和 Cloudlets的示例，
+ * 每个客户都由一个{@link DatacenterBroker}对象表示。
  *
  * <p>It creates Cloudlets with different lengths to enable
  * them to finish in different times.

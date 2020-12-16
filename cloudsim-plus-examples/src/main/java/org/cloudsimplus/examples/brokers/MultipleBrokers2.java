@@ -30,6 +30,7 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.datacenters.Datacenter;
+import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
@@ -56,6 +57,7 @@ import java.util.function.Function;
  * A example showing how to create VMs and Cloudlets
  * for multiple customers, each one represented
  * by a {@link DatacenterBroker} object.
+ * *演示如何为多个客户创建vm和Cloudlets的示例，每个客户都由一个{@link DatacenterBroker}对象表示。
  *
  * <p>It creates Cloudlets with different lengths to enable
  * them to finish in different times.
@@ -67,6 +69,10 @@ import java.util.function.Function;
  * run inside such a VM. In this case, the VM stay idle for a
  * period of time to balance the load of arrived Cloudlets
  * or even to enable fault tolerance.</p>
+ * <p>它创建不同长度的Cloudlets，以使它们在不同的时间完成。
+ * 它也使用{@link DatacenterBroker#setVmDestructionDelayFunction(Function)}方法来定义一个{@link函数}，
+ * 该函数将被用来获取VM空闲后被销毁的时间延迟。在销毁一个空闲VM之前设置一个延迟，可以让动态到达的云计算有机会在这样的VM中运行。
+ * 在这种情况下，VM会保持空闲一段时间，以平衡到达的cloudlet的负载，甚至启用容错功能
  *
  * <p>See the {@link DatacenterBroker#DEF_VM_DESTRUCTION_DELAY}
  * for details about the default behaviour.</p>
@@ -125,6 +131,11 @@ public class MultipleBrokers2 {
          * These lines of code below are used just to show the different
          * ways to simulate arrival of Cloudlets at different times.
          * See the documentation of the methods called below for more details.
+         * *静态或动态提交一个Cloudlet。
+         *选择你想要使用的方式注释下面两行。
+         *无论你选择哪种方式，对于这个例子的配置，结果都是完全相同的。
+         *下面这几行代码只是用来展示模拟cloudlet在不同时间到达的不同方法。
+         *更多细节请参阅下面调用的方法的文档。
          */
         //submitCloudletWithDelay();
         simulation.addOnClockTickListener(this::dynamicCloudletArrival);

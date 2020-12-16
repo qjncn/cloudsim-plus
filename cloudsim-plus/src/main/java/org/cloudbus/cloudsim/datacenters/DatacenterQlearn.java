@@ -1,6 +1,7 @@
 package org.cloudbus.cloudsim.datacenters;
 
-import com.sun.tools.javac.Log;
+
+import com.sun.tools.sjavac.Log;
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;

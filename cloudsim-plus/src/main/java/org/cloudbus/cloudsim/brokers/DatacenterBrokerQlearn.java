@@ -6,19 +6,29 @@ import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudsimplus.heuristics.CloudletToVmMappingQlearn;//算法实现
 
 import java.util.Comparator;
+import java.util.List;
 
 /**
  *
  */
 public class DatacenterBrokerQlearn extends DatacenterBrokerSimple {
+    private List<Vm> vmList;
+    private List<Cloudlet> cloudletList;
+    public double meanTime;
+    public CloudletToVmMappingQlearn Qlearn;
 
     /**
      * Creates a DatacenterBroker object.
      *
      * @param simulation The CloudSim instance that represents the simulation the Entity is related to
      */
-    public DatacenterBrokerQlearn(final CloudSim simulation) {
+    public DatacenterBrokerQlearn(final CloudSim simulation,
+                                  List<Cloudlet>  cloudletList,List<Vm> vmList) {
         super(simulation);
+        this.cloudletList=cloudletList;
+        this.vmList=vmList;
+        Qlearn= new CloudletToVmMappingQlearn(cloudletList,vmList);
+        meanTime = Qlearn.getMeanTime();
     }
 
     /**
@@ -37,8 +47,9 @@ public class DatacenterBrokerQlearn extends DatacenterBrokerSimple {
             return cloudlet.getVm();
         }
         //todo:添加调用的方法 getMappedVm
-        CloudletToVmMappingQlearn Qlearn;
+
         final Vm mappedVm = Qlearn.getMappedVm(cloudlet);
+
 
 
         if (mappedVm == Vm.NULL) {

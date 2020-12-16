@@ -30,7 +30,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 import java.util.ArrayList;
 import java.util.Arrays;
 //import java.util.List;
-import com.sun.tools.javac.util.List;
+import java.util.List;
 
 /**
  *实现 Qlearn算法，返回
@@ -80,10 +80,9 @@ public class CloudletToVmMappingQlearn
         this.graph = new double[NumOfCloudlet][NumOfVM];
         for (int i = 0; i < NumOfCloudlet; i++) {
             for (int j = 0; j < NumOfVM; j++) {
-                graph[i][j] = cloudletList[i].getLength() / vmList[j].getMIPS();
+                this.graph[i][j] = this.cloudletList.get(i).getLength() / this.vmList.get(j).getMips();
             }
         }
-
 
         /**
          * 设置超参数
@@ -99,7 +98,7 @@ public class CloudletToVmMappingQlearn
         for (int episode = 0; episode < MAX_EPISODES; ++episode) {
             System.out.println("第" + episode + "轮训练...");
 
-            List<int> chosenVmID = new ArrayList<int>();
+            List<Integer> chosenVmID = new ArrayList<Integer>();
             for (int CloudID = 0; CloudID < NumOfCloudlet; CloudID++) { // 到达目标状态，结束循环，进行下一轮训练
                 int VmID;
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
@@ -136,7 +135,7 @@ public class CloudletToVmMappingQlearn
      * @param chosenVmID 已经被选过的 VM列表，无法再被选，用序号表示，int型，范围是 0到 (NumOfVM-1)
      * @return 该行最大的 Q值对应的列号，即 VmID
      */
-    private static int max(double[] is,List<int> chosenVmID) {
+    private static int max(double[] is,List<Integer> chosenVmID) {
         int max = 0;
         for(int i = 1; i < is.length; ++i) {
             //排除已经被选过的VmID
@@ -151,7 +150,7 @@ public class CloudletToVmMappingQlearn
      * @param is Q表中 ‘CloudID’ 所在行向量Q[CloudID]
      * @return Q值
      */
-    private static double maxNextQ(double[] is,List<int> chosenVmID,int CloudID ) {
+    private static double maxNextQ(double[] is, List<Integer> chosenVmID ) {
         int VmID = max(is,chosenVmID);//下一个动作的最大Q值的VmID
         return is[VmID];
     }
@@ -184,13 +183,27 @@ public class CloudletToVmMappingQlearn
      *
      */
     public Vm getMappedVm(Cloudlet cloudlet) {
-        int cloudId=cloudlet.getId();
+        int cloudId= (int) cloudlet.getId();
         int max = 0;
         for(int i = 0; i < Q[cloudId].length; ++i) {
             if(Q[cloudId][i] > Q[cloudId][max]) max = i;
         }
 
         return vmList.get(max);
+    }
+
+    /**
+     * 取得当前批次经过Q算法优化之后的平均时间
+     * @return
+     */
+    public double getMeanTime() {
+        List<Double> t = new ArrayList<Double>();
+        for (Cloudlet e:cloudletList) {
+
+            t.add(e.getLength()/getMappedVm(e).getMips());
+        }
+        double mean = t.stream().reduce(Double::sum).orElse(Double.valueOf(0));
+        return mean;
     }
 
 }
