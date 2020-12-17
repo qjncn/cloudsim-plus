@@ -23,6 +23,9 @@ import java.util.List;
  * there is no enough free PEs as required by a VM, or whether the available PEs
  * doesn't have enough capacity, the allocation fails. In the case of fail, no
  * PE is allocated to the requesting VM.
+ * VmSchedulerSpaceShared是一个VMM分配策略，它从一个主机分配一个或多个PEs到虚拟机监视器(VMM)，
+ * 不允许共享PEs。所分配的PEs将被使用，直到VM结束运行。如果没有VM所需的足够的空闲PEs，
+ * 或者可用的PEs没有足够的容量，分配将失败。在失败的情况下，不会给请求VM分配PE。
  *
  * @author Rodrigo N. Calheiros
  * @author Anton Beloglazov

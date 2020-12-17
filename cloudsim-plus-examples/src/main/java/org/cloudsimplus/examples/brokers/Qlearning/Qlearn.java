@@ -1,5 +1,8 @@
 package org.cloudsimplus.examples.brokers.Qlearning;
 import ch.qos.logback.classic.Level;
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
+import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyWorstFit;
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
@@ -12,7 +15,9 @@ import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
 import org.cloudbus.cloudsim.provisioners.ResourceProvisionerSimple;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
+import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
+import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerSpaceShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
@@ -34,16 +39,16 @@ public class Qlearn {
     private static final int HOSTS = 30;
     private static final int HOST_PES = 8;
 
-    private static int CLOUDLETS = 0;//读取data中某列的数据，在某300s内的总数
+    private int CLOUDLETS = 0;//读取data中某列的数据，在某300s内的总数
     private static final int CLOUDLET_LENGTH = 8000;
-    private static final int VMS = CLOUDLETS;
+    private  int VMS = CLOUDLETS;
 
 
     private final CloudSim simulation;
-    private List<DatacenterBrokerQlearn> broker;
+    private static List<DatacenterBrokerQlearn> broker= new ArrayList<>();
     private List<Vm> vmList;
     private List<Cloudlet> cloudletList;
-    private List<Cloudlet> totalCloudletList;
+    private List<Cloudlet> totalCloudletList = new ArrayList<>();
     //todo: DatacenterQlearn
     private DatacenterSimple datacenter0;
     private double batchMeanTime;
@@ -108,14 +113,14 @@ public class Qlearn {
         for (int e:totalNumCLOUDLETS) {
             int submissionDelay = 300*n;//延迟
             CLOUDLETS = e;//得到一批的总数
+            VMS =e;
             cloudletList = new ArrayList<>(CLOUDLETS);//一批的列表
-
             UtilizationModel utilization = new UtilizationModelFull();
             for (int i = 0; i < CLOUDLETS; i++) {
                 Cloudlet cloudlet =
-                    new CloudletSimple(CLOUDLET_LENGTH+200*i,1)//CLOUDLET_LENGTH长度不同
-                        .setFileSize(1024)
-                        .setOutputSize(1024)
+                    new CloudletSimple(i,CLOUDLET_LENGTH+5000*i,1)//CLOUDLET_LENGTH长度不同
+                        //.setFileSize(1024)
+                        //.setOutputSize(1024)
                         .setUtilizationModel(utilization);
                 cloudlet.setSubmissionDelay(submissionDelay);
                 cloudletList.add(cloudlet);
@@ -125,11 +130,11 @@ public class Qlearn {
 
             //todo 创建批次对应的Vm
             vmList = new ArrayList<>(VMS);
-            for (int i = VMS - 1; i >= 0; i--) {
+            for (int i = 0; i <VMS; i++) {
                 Vm vm =
-                    new VmSimple(1000+10*i, 1)
-                        .setRam(512).setBw(1000).setSize(10000)
-                        .setCloudletScheduler(new CloudletSchedulerTimeShared());
+                    new VmSimple(i,1000+10*i, 1)
+                        //.setRam(512).setBw(1000).setSize(10000)
+                        .setCloudletScheduler(new CloudletSchedulerSpaceShared());
                 vmList.add(vm);
             }
             DatacenterBrokerQlearn brokertemp= new DatacenterBrokerQlearn(simulation,cloudletList,vmList);
@@ -161,10 +166,10 @@ public class Qlearn {
         long storage = 1000000; // host storage (Megabyte)
         long bw = 10000; //Megabits/s
 
-        return new HostSimple(ram, bw, storage, peList)
-            .setRamProvisioner(new ResourceProvisionerSimple())
-            .setBwProvisioner(new ResourceProvisionerSimple())
-            .setVmScheduler(new VmSchedulerTimeShared());
+        return new HostSimple(peList)
+            //.setRamProvisioner(new ResourceProvisionerSimple())
+            //.setBwProvisioner(new ResourceProvisionerSimple())
+            .setVmScheduler(new VmSchedulerSpaceShared());
 
     }
 
@@ -177,7 +182,7 @@ public class Qlearn {
         }
 
         //Uses a VmAllocationPolicySimple by default to allocate VMs
-        DatacenterSimple dc0 = new DatacenterSimple(simulation, hostList);
+        DatacenterSimple dc0 = new DatacenterSimple(simulation, hostList,new VmAllocationPolicyWorstFit());
         dc0.setSchedulingInterval(SCHEDULING_INTERVAL);
         return dc0;
     }

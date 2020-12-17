@@ -30,6 +30,7 @@ import org.cloudbus.cloudsim.vms.Vm;
 import java.util.ArrayList;
 import java.util.Arrays;
 //import java.util.List;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,19 +40,20 @@ import java.util.List;
 public class CloudletToVmMappingQlearn
 {
 
-    /** @see #getVmList() */
-    private List<Vm> vmList;
 
-    /** @see #getCloudletList() */
+    /** @see #getVmList() */
+    private List<Vm> vmList;        //不同broker对象调用的算法vmList值不同
+
+    /** @see #getCloudletList() */  //不同broker对象调用的算法cloudletList值不同
     private List<Cloudlet> cloudletList;
 
-    private int NumOfCloudlet;
-    private int NumOfVM;
-    private double[][] Q;
-    private double[][] graph;
-    private double epsilon = 0.8;
-    private double alpha = 0.2;
-    private double gamma = 0.8;
+    private int NumOfCloudlet;      //不同broker对象调用的算法NumOfCloudlet值不同
+    private int NumOfVM;            //不同broker对象调用的算法NumOfVM值不同
+    private double[][] Q;           //不同broker对象调用的算法Q值不同
+    private double[][] graph;       //不同broker对象调用的算法graph值不同
+    private final double epsilon = 0.8;   //定值
+    private final double alpha = 0.2;
+    private final double gamma = 0.8;
 
     public  CloudletToVmMappingQlearn(List<Cloudlet> cloudletList,List<Vm> vmList) {
         this.cloudletList = cloudletList;
@@ -67,7 +69,8 @@ public class CloudletToVmMappingQlearn
          * 构造Q矩阵，默认是0
          */
 
-        this.Q = new double[NumOfCloudlet][NumOfVM];
+        this.Q = new double[NumOfCloudlet+1][NumOfVM];
+        this.Q[NumOfCloudlet] = new double[]{0}; //防止最后一行状态没有办法更新Q值，多一行0值用来更新最后一行Q值
 
         /**
          * reward图 先考虑时延的负数（或倒数）
@@ -98,7 +101,7 @@ public class CloudletToVmMappingQlearn
         for (int episode = 0; episode < MAX_EPISODES; ++episode) {
             System.out.println("第" + episode + "轮训练...");
 
-            List<Integer> chosenVmID = new ArrayList<Integer>();
+            List<Integer> chosenVmID = new LinkedList<>();
             for (int CloudID = 0; CloudID < NumOfCloudlet; CloudID++) { // 到达目标状态，结束循环，进行下一轮训练
                 int VmID;
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
@@ -135,14 +138,16 @@ public class CloudletToVmMappingQlearn
      * @param chosenVmID 已经被选过的 VM列表，无法再被选，用序号表示，int型，范围是 0到 (NumOfVM-1)
      * @return 该行最大的 Q值对应的列号，即 VmID
      */
-    private static int max(double[] is,List<Integer> chosenVmID) {
-        int max = 0;
-        for(int i = 1; i < is.length; ++i) {
+    private int max(double[] is,List<Integer> chosenVmID) {
+
+        double ismax = -2;
+        int maxid=-2;
+        for(int i = 0; i < is.length; i++) {
             //排除已经被选过的VmID
             if(chosenVmID.contains(i)) continue;
-            else if(is[i] > is[max]) max = i;
+            else if(is[i] > ismax) {ismax = is[i];maxid=i;}
         }
-        return max;
+        return maxid==-2?0:maxid;
     }
 
     /**
@@ -150,7 +155,7 @@ public class CloudletToVmMappingQlearn
      * @param is Q表中 ‘CloudID’ 所在行向量Q[CloudID]
      * @return Q值
      */
-    private static double maxNextQ(double[] is, List<Integer> chosenVmID ) {
+    private  double maxNextQ(double[] is, List<Integer> chosenVmID ) {
         int VmID = max(is,chosenVmID);//下一个动作的最大Q值的VmID
         return is[VmID];
     }
