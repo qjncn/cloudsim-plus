@@ -23,6 +23,7 @@
  */
 package org.cloudsimplus.heuristics;
 
+import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.vms.Vm;
@@ -54,12 +55,15 @@ public class CloudletToVmMappingQlearn
     private final double epsilon = 0.8;   //定值
     private final double alpha = 0.2;
     private final double gamma = 0.8;
+    private  List<Integer> map;
+    private  DatacenterBrokerQlearn broker;
 
-    public  CloudletToVmMappingQlearn(List<Cloudlet> cloudletList,List<Vm> vmList) {
+    public  CloudletToVmMappingQlearn(List<Cloudlet> cloudletList, List<Vm> vmList, DatacenterBrokerQlearn broker) {
         this.cloudletList = cloudletList;
         this.vmList = vmList;
         this.NumOfCloudlet = cloudletList.size();
         this.NumOfVM = vmList.size();
+        this.broker=broker;
 
         /**
          * 状态空间由C和V组成，C是300秒内所有cloudlet的有序集合，V是300秒内所有VM的有序集合
@@ -83,9 +87,10 @@ public class CloudletToVmMappingQlearn
         this.graph = new double[NumOfCloudlet][NumOfVM];
         for (int i = 0; i < NumOfCloudlet; i++) {
             for (int j = 0; j < NumOfVM; j++) {
-                this.graph[i][j] = this.cloudletList.get(i).getLength() / this.vmList.get(j).getMips();
+                this.graph[i][j] = this.cloudletList.get(i).getLength() / this.vmList.get(j).getMips() ;
             }
         }
+
 
         /**
          * 设置超参数
@@ -97,8 +102,8 @@ public class CloudletToVmMappingQlearn
         //epsilon = 0.8;
         //alpha = 0.2;
         //gamma = 0.8;
-        int MAX_EPISODES = 400; // 一般都通过设置最大迭代次数来控制训练轮数
-        for (int episode = 0; episode < MAX_EPISODES; ++episode) {
+        int MAX_EPISODES = 40000; // 一般都通过设置最大迭代次数来控制训练轮数
+        for (int episode = 0; episode < MAX_EPISODES; episode++) {
             System.out.println("第" + episode + "轮训练...");
 
             List<Integer> chosenVmID = new LinkedList<>();
@@ -106,15 +111,16 @@ public class CloudletToVmMappingQlearn
                 int VmID;
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
                 if (Math.random() < epsilon) VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
-                else VmID = randomNext(Q[CloudID]); // 随机选择可行动作
+                else VmID = randomNext(Q[CloudID],chosenVmID); // 随机选择可行动作
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
                 //todo：奖励函数需要设计，倒数太简单，负数不对，负数上面代码VmID不能用max函数选，应该用min
-                double reward = 1/graph[CloudID][VmID]; // 奖励，是延时的倒数
+                double reward = graph[CloudID][VmID]; // 奖励，是延时的倒数**1000000000
                 //更新Q表
                 Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[CloudID + 1], chosenVmID));
 
             }
+            map=chosenVmID;//更新map结果
             System.out.println(Arrays.deepToString(Q));
         }
     }
@@ -124,10 +130,11 @@ public class CloudletToVmMappingQlearn
      * @param is Q表中 ‘CloudID’ 所在行向量Q[CloudID]
      * @return 随机的列号
      */
-    private static int randomNext(double[] is) { //
+    private static int randomNext(double[] is,List<Integer> chosenVmID) { //
         int columns  = 0, n = 1;
         for(int i = 0; i < is.length; ++i) {
-            if(is[i] >= 0 && Math.random() < 1.0/n++) columns  = i;
+            if(chosenVmID.contains(i)) continue;
+            else if(is[i] >= 0 && Math.random() < 1.0/n++) columns  = i;
         }
         return columns ;
     }
@@ -189,12 +196,9 @@ public class CloudletToVmMappingQlearn
      */
     public Vm getMappedVm(Cloudlet cloudlet) {
         int cloudId= (int) cloudlet.getId();
-        int max = 0;
-        for(int i = 0; i < Q[cloudId].length; ++i) {
-            if(Q[cloudId][i] > Q[cloudId][max]) max = i;
-        }
-
-        return vmList.get(max);
+        //broker.;
+        int vmid = this.map.get(cloudId);
+        return vmList.get(vmid);
     }
 
     /**
@@ -207,7 +211,7 @@ public class CloudletToVmMappingQlearn
 
             t.add(e.getLength()/getMappedVm(e).getMips());
         }
-        double mean = t.stream().reduce(Double::sum).orElse(Double.valueOf(0));
+        double mean = t.stream().reduce(Double::sum).orElse(Double.valueOf(0))/cloudletList.size();
         return mean;
     }
 

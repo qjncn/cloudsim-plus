@@ -68,6 +68,11 @@ import java.util.function.Function;
  * run inside such a VM. In this case, the VM stays idle for a
  * period of time to balance the load of arrived Cloudlets
  * or even to enable fault tolerance.</p>
+ * * <p>它创建不同长度的Cloudlets，以使它们在不同的时间完成。
+ * *它也使用{@link DatacenterBroker#setVmDestructionDelayFunction(Function)}方法来定义一个{@link函数}，
+ * 该函数将被用来获取VM空闲后被销毁的时间延迟。
+ * *在摧毁一个空闲VM之前设置一个延迟，让动态到达的云有机会在这样的VM中运行。
+ * 在这种情况下，VM会保持空闲一段时间，以平衡到达的cloudlet的负载，甚至启用容错功能
  *
  * <p>See the {@link DatacenterBroker#DEF_VM_DESTRUCTION_DELAY}
  * for details about the default behaviour.</p>
@@ -238,7 +243,7 @@ public class MultipleBrokers1 {
         final List<Cloudlet> list = new ArrayList<>(CLOUDLETS);
         for (int i = 1; i <= CLOUDLETS; i++) {
             int length = initialLength + CLOUDLET_LENGTH * i;
-            Cloudlet cloudlet = createCloudlet(cloudletList.size() + i - 1, length);
+            Cloudlet cloudlet = createCloudlet(cloudletList.size() + i - 1, length);//实现了id接续
             list.add(cloudlet);
         }
 

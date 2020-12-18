@@ -27,7 +27,7 @@ public class DatacenterBrokerQlearn extends DatacenterBrokerSimple {
         super(simulation);
         this.cloudletList=cloudletList;
         this.vmList=vmList;
-        Qlearn= new CloudletToVmMappingQlearn(cloudletList,vmList);
+        Qlearn= new CloudletToVmMappingQlearn(cloudletList,vmList,this);
         meanTime = Qlearn.getMeanTime();
     }
 

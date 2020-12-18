@@ -54,11 +54,13 @@ import java.util.List;
 /**
  * An example showing how to change the policy
  * used by a {@link DatacenterBroker} to map Cloudlets to VMs.
- *
+ *这个示例展示了如何更改DatacenterBroker用于将cloudlet映射到vm的策略。
  * <p>The example uses the CloudSim Plus
  * Functional DatacenterBroker that enables
  * changing the method used for that goal,
  * without requiring to create a subclass to accomplish that.</p>
+ * 该示例使用CloudSim Plus功能的DatacenterBroker，它支持更改用于该目标的方法，而不需要创建一个子类来实现该目标。
+ * 该示例使用类DatacenterBrokerBestFit，该类根据VMs中的免费Pes执行cloudlet到VMs的最佳映射。
  *
  * <p>The example uses the class {@link DatacenterBrokerBestFit} that performs
  * an optimal mapping of Cloudlets to VMs based on the free Pes in VMs.

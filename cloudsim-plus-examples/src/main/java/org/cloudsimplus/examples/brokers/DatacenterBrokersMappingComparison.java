@@ -67,19 +67,21 @@ import java.util.Map;
  * <a href="http://en.wikipedia.org/wiki/Simulated_annealing">Simulated Annealing</a>
  * heuristic to find a suboptimal mapping between Cloudlets and Vm's submitted to a
  * DatacenterBroker. The number of {@link Pe}s of Vm's and Cloudlets are defined
- * randomly.
+ * randomly.这个示例使用模拟退火启发式算法来查找cloudlet和提交给DatacenterBroker的Vm之间的次优映射。
+ * Vm和cloudlet的Pes数量是随机定义的。
  *
  * <p>The {@link DatacenterBrokerHeuristic} is used
  * with the {@link CloudletToVmMappingSimulatedAnnealing} class
  * in order to find an acceptable solution with a high
  * {@link HeuristicSolution#getFitness() fitness value}.</p>
- *
+ * datacenterbroker启发式与cloudlettovmmappingsimulated退火类一起使用，
+ * 以便找到具有高适应度值的可接受的解决方案。
  * <p>Different {@link CloudletToVmMappingHeuristic} implementations can be used
  * with the {@link DatacenterBrokerHeuristic} class.</p>
- *
+ * 不同的CloudletToVmMappingHeuristic实现可以与datacenterbroker启发式类一起使用。
  * <p>A comparison of cloudlet-VM mapping is done among the best fit approach,
  * heuristic approach and round robin mapping.</p>
- *
+ * 比较了最佳拟合法、启发式法和轮询法的cloudlet-VM映射。
  * @author Humaira Abdul Salam
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 4.3.8

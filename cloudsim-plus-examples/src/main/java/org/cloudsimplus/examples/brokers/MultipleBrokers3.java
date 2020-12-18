@@ -53,6 +53,8 @@ import java.util.List;
  * each one represented by a {@link DatacenterBroker} object.
  * The example creates VMs and Cloudlets without defining an ID, which
  * are defined when such objects are submitted to their brokers.
+ * *演示如何为不同客户创建多个虚拟机和Cloudlets的示例，每个虚拟机和Cloudlets都由一个{@link DatacenterBroker}对象表示。
+ * 该示例创建vm和cloudlet时没有定义ID, ID是在将这些对象提交给它们的代理时定义的。
  *
  * @author Manoel Campos da Silva Filho
  * @since CloudSim Plus 1.3.1
