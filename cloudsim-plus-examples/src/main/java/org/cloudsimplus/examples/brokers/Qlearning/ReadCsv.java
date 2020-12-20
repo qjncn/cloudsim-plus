@@ -13,7 +13,7 @@ import com.csvreader.CsvReader;
  */
 
 public class ReadCsv {
-    private static String filePath = "C:\\Users\\qjncn\\Desktop\\data_new1.csv";
+    private static String filePath = "D:\\Backup\\Downloads\\data_new1.csv";
     public static ArrayList<Integer> totalCloudlets=new ArrayList<>();
 
     public static void main(String[] args) {
@@ -41,7 +41,7 @@ public class ReadCsv {
                 //System.out.println(csvReader.getRawRecord());
                 //csvReader.getRawRecord();
                 // 读该行的某一列,打印出来，不是必要的，用于调试
-                System.out.println(csvReader.get(column));
+                //System.out.println(csvReader.get(column));
                 int temp = -1;
                 try {
                     //get函数是取得该colum的当前行，通过while循环readRecord方法继续读取该列下一行，

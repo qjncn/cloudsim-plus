@@ -1,11 +1,13 @@
 package org.cloudbus.cloudsim.datacenters;
 
 
-import com.sun.tools.sjavac.Log;
+
 import org.cloudbus.cloudsim.core.Simulation;
 import org.cloudbus.cloudsim.core.events.SimEvent;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -23,19 +25,19 @@ import java.util.List;
 public class DatacenterQlearn extends DatacenterSimple {
     //choose any unused value you want to represent the tag.
     public static final int PERIODIC_EVENT = 12345;
-
+    Logger LOGGER = LoggerFactory.getLogger(Datacenter.class.getSimpleName());
     public DatacenterQlearn(){}
 
     @Override
     protected void processOtherEvent(SimEvent ev) {
         if (ev == null){
-            Log.debug("Warning: " + getSimulation().clock()+": "+this.getName()+": Null event ignored.");
+            LOGGER.debug("Warning: " + getSimulation().clock()+": "+this.getName()+": Null event ignored.");
         } else {
             int tag = ev.getTag();
             switch(tag){
                 case PERIODIC_EVENT: processPeriodicEvent(ev); break;
                 default:
-                    Log.debug("Warning: " + getSimulation().clock() + ":" + this.getName() + ": Unknown event ignored. Tag:" + tag);
+                    LOGGER.debug("Warning: " + getSimulation().clock() + ":" + this.getName() + ": Unknown event ignored. Tag:" + tag);
             }
         }
     }

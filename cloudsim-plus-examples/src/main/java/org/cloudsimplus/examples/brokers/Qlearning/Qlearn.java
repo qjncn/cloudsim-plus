@@ -1,39 +1,32 @@
 package org.cloudsimplus.examples.brokers.Qlearning;
+
 import ch.qos.logback.classic.Level;
+
 import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyFirstFit;
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicySimple;
-import org.cloudbus.cloudsim.allocationpolicies.VmAllocationPolicyWorstFit;
-import org.cloudbus.cloudsim.brokers.DatacenterBroker;
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.cloudlets.CloudletSimple;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.datacenters.Datacenter;
 import org.cloudbus.cloudsim.datacenters.DatacenterSimple;
 import org.cloudbus.cloudsim.hosts.Host;
 import org.cloudbus.cloudsim.hosts.HostSimple;
 import org.cloudbus.cloudsim.provisioners.PeProvisionerSimple;
-import org.cloudbus.cloudsim.provisioners.ResourceProvisionerSimple;
 import org.cloudbus.cloudsim.resources.Pe;
 import org.cloudbus.cloudsim.resources.PeSimple;
 import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerSpaceShared;
-import org.cloudbus.cloudsim.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerSpaceShared;
-import org.cloudbus.cloudsim.schedulers.vm.VmSchedulerTimeShared;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModel;
 import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
-import org.cloudsimplus.examples.brokers.Qlearning.ReadCsv;
-import org.cloudsimplus.heuristics.CloudletToVmMappingQlearn;
 import org.cloudsimplus.listeners.EventInfo;
 import org.cloudsimplus.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Arrays;
 
 public class Qlearn {
     private static final int SCHEDULING_INTERVAL = 300;
@@ -41,12 +34,14 @@ public class Qlearn {
     private static final int HOST_PES = 8;
 
     private int CLOUDLETS = 0;//读取data中某列的数据，在某300s内的总数
-    private static final int CLOUDLET_LENGTH = 15000;
+    private static final int CLOUDLET_LENGTH = 1500;
     private  int VMS =0;
 
 
     private final CloudSim simulation;
+    //比较不同算法,修改三处broker类
     private static List<DatacenterBrokerQlearn> brokers= new ArrayList<>();
+
     private List<Vm> vmList;
     private List<Cloudlet> cloudletList;
     private List<Cloudlet> totalCloudletList = new ArrayList<>();
@@ -73,17 +68,14 @@ public class Qlearn {
         simulation.addOnClockTickListener(this::onClockTickListener);
         datacenter0 =  createDatacenter();
 
-       //todo 如何实现 Qlearn算法 Qlearn:CloudletToVmMappingQlearn
+
         //simulation.addOnClockTickListener(this::createAndSubmitCloudletsAndVmsAndBorkers);
         totalCloudletList = createAndSubmitCloudletsAndVmsAndBorkers();
 
         simulation.start();
-        for (DatacenterBrokerQlearn broker:brokers) {
-            final List<Cloudlet> finishedCloudlets = broker.getCloudletFinishedList();
-            finishedCloudlets.sort(Comparator.comparingLong(Cloudlet::getId));
-            new CloudletsTableBuilder(finishedCloudlets).build();
-            System.out.printf(String.valueOf(broker.meanTime));
-        }
+        printResults();
+
+
     }
 
     /**
@@ -110,19 +102,19 @@ public class Qlearn {
         //读取到全部负载数组
         int[] totalNumCLOUDLETS = readCsv.getCloudletList();
         //debug 调试用，取前几个值
-        totalNumCLOUDLETS = Arrays.copyOfRange(totalNumCLOUDLETS, 0, 1);
+        totalNumCLOUDLETS = Arrays.copyOfRange(totalNumCLOUDLETS, 1, 2);
         //设置批次延迟
         int n=0;//批次
         //for循环负责批次循环
         for (int e:totalNumCLOUDLETS) {
             int submissionDelay = 300*n;//延迟
             CLOUDLETS = e;//得到一批的总数
-            VMS = (int) (0.5*e);
+            VMS = e;
             final List<Cloudlet> list = new ArrayList<>(CLOUDLETS);
             UtilizationModel utilization = new UtilizationModelFull();
             for (int i = 0; i < CLOUDLETS; i++) {
                 Cloudlet cloudlet =
-                    new CloudletSimple(i,CLOUDLET_LENGTH+2000*i,1)//CLOUDLET_LENGTH长度不同
+                    new CloudletSimple(i,CLOUDLET_LENGTH+200*i,1)//CLOUDLET_LENGTH长度不同
                         //.setFileSize(1024)
                         //.setOutputSize(1024)
                         .setUtilizationModel(utilization);
@@ -132,11 +124,12 @@ public class Qlearn {
 
 
 
-            //todo 创建批次对应的Vm
+            //todo random长度的Vm 100-300
+            java.util.Random r=new java.util.Random(10);
 
-            for (int i = 0; i <VMS; i++) {
+            for (int i = 0; i < VMS; i++) {
                 Vm vm =
-                    new VmSimple(i,100+10*i, 1)
+                    new VmSimple( i,r.nextInt(200)+100, 1) //100-300
                         //.setRam(512).setBw(1000).setSize(10000)
                         .setCloudletScheduler(new CloudletSchedulerSpaceShared());
                 vmList.add(vm);
@@ -149,6 +142,17 @@ public class Qlearn {
             System.out.printf("batch %d 's mean time is %f",n,batchMeanTime);
             n++;
             totalCloudletList.addAll(cloudletList);//增加一批到总表
+
+            //对比其他算法
+//            DatacenterBrokerQlearn brokertemp= new DatacenterBrokerQlearn()simulation);
+//            brokers.add(brokertemp);
+//            brokertemp.submitVmList(vmList);
+//            brokertemp.submitCloudletList(cloudletList);
+//            //batchMeanTime = brokertemp.meanTime;
+//            //System.out.printf("batch %d 's mean time is %f",n,batchMeanTime);
+//            n++;
+//            totalCloudletList.addAll(cloudletList);//增加一批到总表
+
         }
         return totalCloudletList;
     }
@@ -191,11 +195,11 @@ public class Qlearn {
         return dc0;
     }
     private void printResults() {
-        for (DatacenterBrokerQlearn broker : brokers) {
-            new CloudletsTableBuilder(broker.getCloudletFinishedList())
-                .setTitle(broker.getName())
-                .build();
-            System.out.printf(String.valueOf(broker.meanTime));
+            for (DatacenterBrokerQlearn broker:brokers) {
+                final List<Cloudlet> finishedCloudlets = broker.getCloudletFinishedList();
+                finishedCloudlets.sort(Comparator.comparingLong(Cloudlet::getId));
+                new CloudletsTableBuilder(finishedCloudlets).build();
+                System.out.printf(String.valueOf(broker.meanTime));
         }
     }
 }

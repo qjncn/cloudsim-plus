@@ -102,7 +102,7 @@ public class CloudletToVmMappingQlearn
         //epsilon = 0.8;
         //alpha = 0.2;
         //gamma = 0.8;
-        int MAX_EPISODES = 40000; // 一般都通过设置最大迭代次数来控制训练轮数
+        int MAX_EPISODES = 10000; // 一般都通过设置最大迭代次数来控制训练轮数
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
             System.out.println("第" + episode + "轮训练...");
 
