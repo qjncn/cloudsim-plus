@@ -28,11 +28,9 @@ import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.vms.Vm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 //import java.util.List;
-import java.util.LinkedList;
-import java.util.List;
+
 
 /**
  *实现 Qlearn算法，返回
@@ -52,9 +50,9 @@ public class CloudletToVmMappingQlearn
     private int NumOfVM;            //不同broker对象调用的算法NumOfVM值不同
     private double[][] Q;           //不同broker对象调用的算法Q值不同
     private double[][] graph;       //不同broker对象调用的算法graph值不同
-    private final double epsilon = 0.8;   //定值
-    private final double alpha = 0.2;
-    private final double gamma = 0.8;
+    private final double epsilon = 0.8;     //贪婪因子
+    private final double alpha = 0.5;       //学习率 权衡这次和上次学习结果
+    private final double gamma = 0.8;       //衰减因子 考虑未来奖励
     private  List<Integer> map;
     private  DatacenterBrokerQlearn broker;
 
@@ -75,13 +73,19 @@ public class CloudletToVmMappingQlearn
 
         this.Q = new double[NumOfCloudlet+1][NumOfVM];
         this.Q[NumOfCloudlet] = new double[]{0}; //防止最后一行状态没有办法更新Q值，多一行0值用来更新最后一行Q值
-
+        //随机初始化Q表，最后一行除外,作用不大，迭代次数太多的原因
+        java.util.Random r1=new java.util.Random(1);
+        for (int i = 0; i < NumOfCloudlet; i++) {
+            for (int j = 0; j < NumOfVM; j++) {
+                this.Q[i][j] = r1.nextInt(100) ;
+            }
+        }
         /**
-         * reward图 先考虑时延的负数（或倒数）
-         * 时延 t定义包括：job产生时刻到处理完之间的时间，其中包括了的处理时间和队列等待时间。
+         * reward图 先考虑执行时间的负数（或倒数）
+         * 执行时间 t定义包括：job产生时刻到处理完之间的时间，其中包括了的处理时间和队列等待时间。
          * 这里为了突出算法，只考虑处理时间。
-         * 所以一个任务的时延 t = len(cloudlet)/mips(VM)
-         * graph[i][j] 表示将第i个cloudlet分配给第j个VM的 时延矩阵
+         * 所以一个任务的执行时间 t = len(cloudlet)/mips(VM)
+         * graph[i][j] 表示将第i个cloudlet分配给第j个VM的 执行时间矩阵
          *
          */
         this.graph = new double[NumOfCloudlet][NumOfVM];
@@ -107,18 +111,34 @@ public class CloudletToVmMappingQlearn
             System.out.println("第" + episode + "轮训练...");
 
             List<Integer> chosenVmID = new LinkedList<>();
-            for (int CloudID = 0; CloudID < NumOfCloudlet; CloudID++) { // 到达目标状态，结束循环，进行下一轮训练
+
+            //todo:把for 改成随机遍历，彻底解决for中的max筛选次序问题
+            Set<Integer> num = new LinkedHashSet<>();
+            Random r2 = new Random();
+            while (num.size() < NumOfCloudlet){
+                // 生成0-10的数组，观看有无重复值
+                num.add(r2.nextInt(NumOfCloudlet));
+            }
+
+            Integer[] strs=new Integer[num.size()];
+            num.toArray(strs);
+            // 遍历集合
+            for (int i =0;i<num.size();i++) {
+              // 到达目标状态，结束循环，进行下一轮训练
                 int VmID;
+                int CloudID= strs[i];
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
                 if (Math.random() < epsilon) VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
                 else VmID = randomNext(Q[CloudID],chosenVmID); // 随机选择可行动作
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
                 //todo：奖励函数需要设计，倒数太简单，负数不对，负数上面代码VmID不能用max函数选，应该用min
-                double reward = graph[CloudID][VmID]; // 奖励，是延时的倒数**1000000000
-                //更新Q表
-                Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[CloudID + 1], chosenVmID));
-
+                double reward = graph[CloudID][VmID]; // 奖励，是执行时间的倒数
+                //double reward = 50*Math.exp(graph[CloudID][VmID]/100);
+                //更新Q表,注意最后那行只能和第0行更新
+                if(i+1<num.size())
+                Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[i+1]], chosenVmID));
+                else Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[0]], chosenVmID));
             }
             map=chosenVmID;//更新map结果
             System.out.println(Arrays.deepToString(Q));

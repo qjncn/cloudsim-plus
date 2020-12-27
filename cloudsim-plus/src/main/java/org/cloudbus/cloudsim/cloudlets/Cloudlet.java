@@ -173,6 +173,7 @@ public interface Cloudlet extends UniquelyIdentifiable, Comparable<Cloudlet>, Cu
 
     /**
      * Returns the total execution time of the Cloudlet in seconds.
+     * 返回Cloudlet的总执行时间，以秒为单位。
      *
      * @return time in which the Cloudlet was running
      * or {@link #NOT_ASSIGNED} if it hasn't finished yet

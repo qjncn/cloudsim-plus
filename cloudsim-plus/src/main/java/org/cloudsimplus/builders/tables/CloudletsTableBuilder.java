@@ -97,6 +97,11 @@ public class CloudletsTableBuilder extends TableBuilderAbstract<Cloudlet> {
      * Previously, in such a situation, the finish time was rounded to 11 (Math.ceil),
      * giving the wrong idea that the Cloudlet took 11 seconds to finish.
      * This method makes some little adjustments to avoid such a precision issue.
+     * *将给定的时间四舍五入，使小数点被忽略。
+     * *有时云朵开始于时间0.1，结束于时间10.1。
+     * *以前，在这种情况下，完成时间四舍五入为11 (Math.ceil)，
+     * *错误地认为云花了11秒完成。
+     * *这种方法做了一些小的调整，以避免这样的精度问题。
      *
      * @param cloudlet the Cloudlet being printed
      * @param time the time to round
