@@ -50,9 +50,9 @@ public class CloudletToVmMappingQlearn
     private int NumOfVM;            //不同broker对象调用的算法NumOfVM值不同
     private double[][] Q;           //不同broker对象调用的算法Q值不同
     private double[][] graph;       //不同broker对象调用的算法graph值不同
-    private final double epsilon = 0.8;     //贪婪因子
-    private final double alpha = 0.5;       //学习率 权衡这次和上次学习结果
-    private final double gamma = 0.8;       //衰减因子 考虑未来奖励
+    private final double epsilon = 0.1;     //贪婪因子
+    private final double alpha = 0.1;       //学习率 权衡这次和上次学习结果
+    private final double gamma = 0.9;       //衰减因子 考虑未来奖励
     private  List<Integer> map;
     private  DatacenterBrokerQlearn broker;
 
@@ -71,15 +71,15 @@ public class CloudletToVmMappingQlearn
          * 构造Q矩阵，默认是0
          */
 
-        this.Q = new double[NumOfCloudlet+1][NumOfVM];
-        this.Q[NumOfCloudlet] = new double[]{0}; //防止最后一行状态没有办法更新Q值，多一行0值用来更新最后一行Q值
+        this.Q = new double[NumOfCloudlet][NumOfVM];
+        //this.Q[NumOfCloudlet] = new double[]{0}; //防止最后一行状态没有办法更新Q值，多一行0值用来更新最后一行Q值
         //随机初始化Q表，最后一行除外,作用不大，迭代次数太多的原因
-        java.util.Random r1=new java.util.Random(1);
-        for (int i = 0; i < NumOfCloudlet; i++) {
-            for (int j = 0; j < NumOfVM; j++) {
-                this.Q[i][j] = r1.nextInt(100) ;
-            }
-        }
+//        java.util.Random r1=new java.util.Random(1);
+//        for (int i = 0; i < NumOfCloudlet; i++) {
+//            for (int j = 0; j < NumOfVM; j++) {
+//                this.Q[i][j] = r1.nextInt(100) ;
+//            }
+//        }
         /**
          * reward图 先考虑执行时间的负数（或倒数）
          * 执行时间 t定义包括：job产生时刻到处理完之间的时间，其中包括了的处理时间和队列等待时间。
@@ -103,16 +103,13 @@ public class CloudletToVmMappingQlearn
          * @param gamma：衰减因子
          * @param MAX_EPISODES：最大迭代次数
          */
-        //epsilon = 0.8;
-        //alpha = 0.2;
-        //gamma = 0.8;
-        int MAX_EPISODES = 10000; // 一般都通过设置最大迭代次数来控制训练轮数
+        int MAX_EPISODES = 1000000; // 一般都通过设置最大迭代次数来控制训练轮数
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
             System.out.println("第" + episode + "轮训练...");
 
-            List<Integer> chosenVmID = new LinkedList<>();
+            List<Integer> chosenVmID = new ArrayList<Integer>();
 
-            //todo:把for 改成随机遍历，彻底解决for中的max筛选次序问题
+            //随机遍历，彻底解决for中的max筛选次序问题
             Set<Integer> num = new LinkedHashSet<>();
             Random r2 = new Random();
             while (num.size() < NumOfCloudlet){
@@ -128,25 +125,25 @@ public class CloudletToVmMappingQlearn
                 int VmID;
                 int CloudID= strs[i];
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
-                if (Math.random() < epsilon) VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
+                if (Math.random() <(1- epsilon)) VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
                 else VmID = randomNext(Q[CloudID],chosenVmID); // 随机选择可行动作
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
                 //todo：奖励函数需要设计，倒数太简单，负数不对，负数上面代码VmID不能用max函数选，应该用min
-                double reward = graph[CloudID][VmID]; // 奖励，是执行时间的倒数
+                double reward = 10000/graph[CloudID][VmID]; // 奖励，是执行时间的倒数
                 //double reward = 50*Math.exp(graph[CloudID][VmID]/100);
-                //更新Q表,注意最后那行只能和第0行更新
+                //更新Q表,注意最后那行只能和初始行循环更新
                 if(i+1<num.size())
                 Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[i+1]], chosenVmID));
-                else Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[0]], chosenVmID));
+                else Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward +0);
             }
-            map=chosenVmID;//更新map结果
+            map=chosenVmID;//更新map结果,只要迭代episode最后一次的
             System.out.println(Arrays.deepToString(Q));
         }
     }
 
     /**
-     * 蓄水池抽样，等概率选择流式数据
+     * 蓄水池抽样，等概率选择流式数据  改成普通等概率
      * @param is Q表中 ‘CloudID’ 所在行向量Q[CloudID]
      * @return 随机的列号
      */
@@ -158,6 +155,18 @@ public class CloudletToVmMappingQlearn
         }
         return columns ;
     }
+//    private static int randomNext(double[] is,List<Integer> chosenVmID) { //
+//        Random r3 = new Random();
+//        while(true) {
+//            int columns = r3.nextInt(is.length);      //随机生成一个0~length的整数columns
+//            if (chosenVmID.contains(columns)) {        //排除已选择的
+//                continue;
+//            }
+//            else return columns;
+//        }
+//    }
+
+
 
     /**
      * 找出is向量的最大值，并保证候选的 VmID 不属于 已经被选过的 chosenVmID
@@ -167,14 +176,20 @@ public class CloudletToVmMappingQlearn
      */
     private int max(double[] is,List<Integer> chosenVmID) {
 
-        double ismax = -2;
-        int maxid=-2;
+        double ismax = -99999;
+        int maxid=-99999;
         for(int i = 0; i < is.length; i++) {
             //排除已经被选过的VmID
-            if(chosenVmID.contains(i)) continue;
-            else if(is[i] > ismax) {ismax = is[i];maxid=i;}
+            if(chosenVmID.contains(i)) {
+                continue;
+            }
+            else if(is[i] > ismax) {
+                ismax = is[i];
+                maxid=i;
+            }
         }
-        return maxid==-2?0:maxid;
+        //return maxid==-2?0:maxid;
+        return maxid;
     }
 
     /**
@@ -183,8 +198,8 @@ public class CloudletToVmMappingQlearn
      * @return Q值
      */
     private  double maxNextQ(double[] is, List<Integer> chosenVmID ) {
-        int VmID = max(is,chosenVmID);//下一个动作的最大Q值的VmID
-        return is[VmID];
+            int VmID = max(is, chosenVmID);//下一个动作的最大Q值的VmID
+            return is[VmID];
     }
 
 

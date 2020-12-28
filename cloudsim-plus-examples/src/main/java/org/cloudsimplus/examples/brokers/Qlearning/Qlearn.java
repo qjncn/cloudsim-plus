@@ -62,21 +62,14 @@ public class Qlearn {
 
     private Qlearn() {
         Log.setLevel(Level.ALL);
-
-        /*Enables just some level of log messages.
-          Make sure to import org.cloudsimplus.util.Log;*/
-        //Log.setLevel(ch.qos.logback.classic.Level.WARN);
         cloudletList = new ArrayList<>(CLOUDLETS);//一批的列表,可以累加
         vmList = new ArrayList<>(VMS);
-
         simulation = new CloudSim();
         simulation.addOnClockTickListener(this::onClockTickListener);
         datacenter0 =  createDatacenter();
 
-
         //simulation.addOnClockTickListener(this::createAndSubmitCloudletsAndVmsAndBorkers);
         totalCloudletList = createAndSubmitCloudletsAndVmsAndBorkers();
-
         simulation.start();
         printResults();
 
@@ -112,16 +105,16 @@ public class Qlearn {
         int n=0;//批次
         //for循环负责批次循环
         for (int e:totalNumCLOUDLETS) {
-            int submissionDelay = 300*n;//延迟
-            e=10;       //单独设置任务数量
-            CLOUDLETS = e;//得到一批的总数
+            int submissionDelay = 300*n;    //延迟
+            e=10;           //单独设置任务数量
+            CLOUDLETS = e;  //得到一批的总数
             VMS = e;
             final List<Cloudlet> list = new ArrayList<>(CLOUDLETS);
             UtilizationModel utilization = new UtilizationModelFull();
             java.util.Random r = new java.util.Random(10);
             for (int i = 0; i < CLOUDLETS; i++) {
                 Cloudlet cloudlet =
-                    new CloudletSimple(i,1000*i+15000,1)//CLOUDLET_LENGTH长度不同15000-30000
+                    new CloudletSimple(i,1000*i+15000,1)    //CLOUDLET_LENGTH长度不同15000-30000
                     //new CloudletSimple(i,r.nextInt(20000)+10000,1)
                         //.setFileSize(1024)
                         //.setOutputSize(1024)
