@@ -23,6 +23,7 @@
  */
 package org.cloudsimplus.heuristics;
 
+import org.apache.commons.math3.analysis.function.Acosh;
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.vms.Vm;
@@ -50,10 +51,11 @@ public class CloudletToVmMappingQlearn
     private int NumOfVM;            //不同broker对象调用的算法NumOfVM值不同
     private double[][] Q;           //不同broker对象调用的算法Q值不同
     private double[][] graph;       //不同broker对象调用的算法graph值不同
-    private final double epsilon = 0.1;     //贪婪因子
+    private double epsilon = 0.1;     //贪婪因子
+
     private final double alpha = 0.5;       //学习率 权衡这次和上次学习结果
     private final double gamma = 0.8;       //衰减因子 考虑未来奖励
-    private final double  threshold = 0.00001; //收敛停止阀值
+    private final double  threshold = 0.1; //收敛停止阀值
     private  Map map =  new HashMap();
     private  DatacenterBrokerQlearn broker;
 
@@ -104,9 +106,12 @@ public class CloudletToVmMappingQlearn
          * @param gamma：衰减因子
          * @param MAX_EPISODES：最大迭代次数
          */
-        int MAX_EPISODES = 1000; // 一般都通过设置最大迭代次数来控制训练轮数
+        int MAX_EPISODES = 100000; // 一般都通过设置最大迭代次数来控制训练轮数
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
             System.out.println("第" + episode + "轮训练...");
+            //新设计了函数epsilon为收敛
+            epsilon = 0.2* Math.cos(Math.PI/(2*MAX_EPISODES)) *episode;
+            System.out.println("本轮贪婪因子衰减为"+epsilon);
 
             List<Integer> chosenVmID = new ArrayList<Integer>();
             List<Integer> chosenCloudletID = new ArrayList<Integer>();
@@ -121,15 +126,20 @@ public class CloudletToVmMappingQlearn
             Integer[] strs = new Integer[num.size()];
             num.toArray(strs);
             double QvalueDelta = 0;
+
             // 遍历集合
             for (int i = 0; i < num.size(); i++) {
                 // 到达目标状态，结束循环，进行下一轮训练
                 int VmID;
                 int CloudID = strs[i];
+                //增加行列的存储变量，应对随机行选取，以求map按对应顺序保存字典
                 chosenCloudletID.add(CloudID);
-                //保证候选的VmID 不属于 已经被选过的chosenVmID
-                if (Math.random() < (1 - epsilon))
+
+                //if (Math.random() < (1 - epsilon))
+
+                if (Math.random() < (1 -epsilon )) {
                     VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
+                }
                 else VmID = randomNext(Q[CloudID], chosenVmID); // 随机选择可行动作
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
@@ -150,7 +160,7 @@ public class CloudletToVmMappingQlearn
             }
             System.out.println(Arrays.deepToString(Q));
             System.out.println(map);
-            System.out.println(QvalueDelta);
+            System.out.println("本轮最大差值是"+QvalueDelta);
 
             //todo:增加停止阀值
             //求出各状态和上一次求得状态的最大差值
