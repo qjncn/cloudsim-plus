@@ -25,8 +25,8 @@ package org.cloudsimplus.heuristics;
 
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
-import org.cloudbus.cloudsim.distributions.ContinuousDistribution;
 import org.cloudbus.cloudsim.vms.Vm;
+
 
 import java.util.*;
 //import java.util.List;
@@ -51,9 +51,10 @@ public class CloudletToVmMappingQlearn
     private double[][] Q;           //不同broker对象调用的算法Q值不同
     private double[][] graph;       //不同broker对象调用的算法graph值不同
     private final double epsilon = 0.1;     //贪婪因子
-    private final double alpha = 0.1;       //学习率 权衡这次和上次学习结果
-    private final double gamma = 0.9;       //衰减因子 考虑未来奖励
-    private  List<Integer> map;
+    private final double alpha = 0.5;       //学习率 权衡这次和上次学习结果
+    private final double gamma = 0.8;       //衰减因子 考虑未来奖励
+    private final double  threshold = 0.00001; //收敛停止阀值
+    private  Map map =  new HashMap();
     private  DatacenterBrokerQlearn broker;
 
     public  CloudletToVmMappingQlearn(List<Cloudlet> cloudletList, List<Vm> vmList, DatacenterBrokerQlearn broker) {
@@ -61,7 +62,7 @@ public class CloudletToVmMappingQlearn
         this.vmList = vmList;
         this.NumOfCloudlet = cloudletList.size();
         this.NumOfVM = vmList.size();
-        this.broker=broker;
+        this.broker = broker;
 
         /**
          * 状态空间由C和V组成，C是300秒内所有cloudlet的有序集合，V是300秒内所有VM的有序集合
@@ -91,7 +92,7 @@ public class CloudletToVmMappingQlearn
         this.graph = new double[NumOfCloudlet][NumOfVM];
         for (int i = 0; i < NumOfCloudlet; i++) {
             for (int j = 0; j < NumOfVM; j++) {
-                this.graph[i][j] = this.cloudletList.get(i).getLength() / this.vmList.get(j).getMips() ;
+                this.graph[i][j] = this.cloudletList.get(i).getLength() / this.vmList.get(j).getMips();
             }
         }
 
@@ -103,42 +104,60 @@ public class CloudletToVmMappingQlearn
          * @param gamma：衰减因子
          * @param MAX_EPISODES：最大迭代次数
          */
-        int MAX_EPISODES = 1000000; // 一般都通过设置最大迭代次数来控制训练轮数
+        int MAX_EPISODES = 1000; // 一般都通过设置最大迭代次数来控制训练轮数
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
             System.out.println("第" + episode + "轮训练...");
 
             List<Integer> chosenVmID = new ArrayList<Integer>();
-
+            List<Integer> chosenCloudletID = new ArrayList<Integer>();
             //随机遍历，彻底解决for中的max筛选次序问题
             Set<Integer> num = new LinkedHashSet<>();
             Random r2 = new Random();
-            while (num.size() < NumOfCloudlet){
+            while (num.size() < NumOfCloudlet) {
                 // 生成0-10的数组，观看有无重复值
                 num.add(r2.nextInt(NumOfCloudlet));
             }
 
-            Integer[] strs=new Integer[num.size()];
+            Integer[] strs = new Integer[num.size()];
             num.toArray(strs);
+            double QvalueDelta = 0;
             // 遍历集合
-            for (int i =0;i<num.size();i++) {
-              // 到达目标状态，结束循环，进行下一轮训练
+            for (int i = 0; i < num.size(); i++) {
+                // 到达目标状态，结束循环，进行下一轮训练
                 int VmID;
-                int CloudID= strs[i];
+                int CloudID = strs[i];
+                chosenCloudletID.add(CloudID);
                 //保证候选的VmID 不属于 已经被选过的chosenVmID
-                if (Math.random() <(1- epsilon)) VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
-                else VmID = randomNext(Q[CloudID],chosenVmID); // 随机选择可行动作
+                if (Math.random() < (1 - epsilon))
+                    VmID = max(Q[CloudID], chosenVmID); // 通过 Q 表选择动作，即选出Q表中CloudID行中的最大值，返回列号
+                else VmID = randomNext(Q[CloudID], chosenVmID); // 随机选择可行动作
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
                 //todo：奖励函数需要设计，倒数太简单，负数不对，负数上面代码VmID不能用max函数选，应该用min
-                double reward = 10000/graph[CloudID][VmID]; // 奖励，是执行时间的倒数
+                double reward = 1000/graph[CloudID][VmID]; // 奖励，是执行时间的倒数
                 //double reward = 50*Math.exp(graph[CloudID][VmID]/100);
                 //更新Q表,注意最后那行只能和初始行循环更新
-                if(i+1<num.size())
-                Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[i+1]], chosenVmID));
-                else Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward +0);
+                double QOldValue = Q[CloudID][VmID];
+                if (i + 1 < num.size())
+                    Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + gamma * maxNextQ(Q[strs[i + 1]], chosenVmID));
+                else Q[CloudID][VmID] = (1 - alpha) * Q[CloudID][VmID] + alpha * (reward + 0);
+                //求出各状态和上一次求得状态的最大差值
+                QvalueDelta = Math.max(QvalueDelta, Math.abs(QOldValue - Q[CloudID][VmID] ));
+
             }
-            map=chosenVmID;//更新map结果,只要迭代episode最后一次的
+            for (int i=0 ;i<NumOfCloudlet;i++){
+                map.put(chosenCloudletID.get(i), chosenVmID.get(i));//更新map结果,只要迭代episode最后一次的
+            }
             System.out.println(Arrays.deepToString(Q));
+            System.out.println(map);
+            System.out.println(QvalueDelta);
+
+            //todo:增加停止阀值
+            //求出各状态和上一次求得状态的最大差值
+            if (QvalueDelta < threshold) {
+                System.out.println("第" + episode + "轮后,所得结果已经收敛,运算结束");
+                break;
+            }
         }
     }
 
@@ -232,7 +251,7 @@ public class CloudletToVmMappingQlearn
     public Vm getMappedVm(Cloudlet cloudlet) {
         int cloudId= (int) cloudlet.getId();
         //broker.;
-        int vmid = this.map.get(cloudId);
+        int vmid = (int) this.map.get(cloudId);
         return vmList.get(vmid);
     }
 

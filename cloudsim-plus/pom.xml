@@ -540,6 +540,56 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.8.0-beta2</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.ejml/dense64 -->
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>dense64</artifactId>
+            <version>0.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>core</artifactId>
+            <version>0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>dense64</artifactId>
+            <version>0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>denseC64</artifactId>
+            <version>0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.ejml</groupId>
+            <artifactId>equation</artifactId>
+            <version>0.30</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+        <groupId>org.ejml</groupId>
+        <artifactId>simple</artifactId>
+        <version>0.30</version>
+        <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.cloudsimplus</groupId>
+            <artifactId>cloudsim-plus</artifactId>
+            <version>5.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudsimplus</groupId>
+            <artifactId>cloudsim-plus-examples</artifactId>
+            <version>5.4.3</version>
+        </dependency>
     </dependencies>
 
     <reporting>

@@ -106,7 +106,7 @@ public class Qlearn {
         //for循环负责批次循环
         for (int e:totalNumCLOUDLETS) {
             int submissionDelay = 300*n;    //延迟
-            e=10;           //单独设置任务数量
+            e=4;           //单独设置任务数量
             CLOUDLETS = e;  //得到一批的总数
             VMS = e;
             final List<Cloudlet> list = new ArrayList<>(CLOUDLETS);
@@ -114,8 +114,8 @@ public class Qlearn {
             java.util.Random r = new java.util.Random(10);
             for (int i = 0; i < CLOUDLETS; i++) {
                 Cloudlet cloudlet =
-                    new CloudletSimple(i,1000*i+15000,1)    //CLOUDLET_LENGTH长度不同15000-30000
-                    //new CloudletSimple(i,r.nextInt(20000)+10000,1)
+                    //new CloudletSimple(i,1000*i+15000,1)    //CLOUDLET_LENGTH长度不同15000-30000
+                    new CloudletSimple(i,r.nextInt(20000)+10000,1)
                         //.setFileSize(1024)
                         //.setOutputSize(1024)
                         .setUtilizationModel(utilization);
