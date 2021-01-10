@@ -23,12 +23,11 @@
  */
 package org.cloudsimplus.heuristics;
 
-import org.apache.commons.math3.analysis.function.Acosh;
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.vms.Vm;
-
-
+import org.math.plot.*;
+import javax.swing.*;
 import java.util.*;
 //import java.util.List;
 
@@ -53,9 +52,10 @@ public class CloudletToVmMappingQlearn
     private double[][] graph;       //不同broker对象调用的算法graph值不同
     private double epsilon = 0.1;     //贪婪因子
 
-    private final double alpha = 0.5;       //学习率 权衡这次和上次学习结果
-    private final double gamma = 0.8;       //衰减因子 考虑未来奖励
-    private final double  threshold = 0.1; //收敛停止阀值
+    private final double alpha = 0.02;       //学习率 权衡这次和上次学习结果
+    private final double gamma = 0.98;       //衰减因子 考虑未来奖励
+    private final double  threshold = 0.001; //收敛停止阀值
+    private final int MAX_EPISODES = 1000000; // 一般都通过设置最大迭代次数来控制训练轮数
     private  Map map =  new HashMap();
     private  DatacenterBrokerQlearn broker;
 
@@ -106,11 +106,15 @@ public class CloudletToVmMappingQlearn
          * @param gamma：衰减因子
          * @param MAX_EPISODES：最大迭代次数
          */
-        int MAX_EPISODES = 100000; // 一般都通过设置最大迭代次数来控制训练轮数
+
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
-            System.out.println("第" + episode + "轮训练...");
+            double process = (double) 100* episode/MAX_EPISODES;
+            System.out.println("第" + episode + "轮训练.....>>>>>>>>>" + process +"%" );
             //新设计了函数epsilon为收敛
-            epsilon = 0.2* Math.cos(Math.PI/(2*MAX_EPISODES)) *episode;
+            //函数1
+            //epsilon = 0.2 * Math.cos(Math.PI/(2*MAX_EPISODES) * episode);
+            //函数2
+            epsilon = 0.1 * Math.cos(Math.PI/(MAX_EPISODES) * episode) + 0.1;
             System.out.println("本轮贪婪因子衰减为"+epsilon);
 
             List<Integer> chosenVmID = new ArrayList<Integer>();
@@ -159,7 +163,7 @@ public class CloudletToVmMappingQlearn
                 map.put(chosenCloudletID.get(i), chosenVmID.get(i));//更新map结果,只要迭代episode最后一次的
             }
             System.out.println(Arrays.deepToString(Q));
-            System.out.println(map);
+            System.out.println("本轮CloudID和VMID匹配为"+map);
             System.out.println("本轮最大差值是"+QvalueDelta);
 
             //todo:增加停止阀值
@@ -168,6 +172,8 @@ public class CloudletToVmMappingQlearn
                 System.out.println("第" + episode + "轮后,所得结果已经收敛,运算结束");
                 break;
             }
+
+            draw2D(process,QvalueDelta);
         }
     }
 
@@ -277,6 +283,20 @@ public class CloudletToVmMappingQlearn
         }
         double mean = t.stream().reduce(Double::sum).orElse(Double.valueOf(0))/cloudletList.size();
         return mean;
+    }
+
+    //画图 https://github.com/qjncn/jmathplot
+    void draw2D(double x,double y){
+        // create your PlotPanel (you can use it as a JPanel)
+        Plot2DPanel plot = new Plot2DPanel();
+
+        // add a line plot to the PlotPanel
+        plot.addLinePlot("my plot", x, y);
+
+        // put the PlotPanel in a JFrame, as a JPanel
+        JFrame frame = new JFrame("a plot panel");
+        frame.setContentPane(plot);
+        frame.setVisible(true);
     }
 
 }

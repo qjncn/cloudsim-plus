@@ -4,7 +4,7 @@
 
     <groupId>org.cloudsimplus</groupId>
     <artifactId>cloudsim-plus</artifactId>
-    <version>5.4.3</version>
+    <version>6.0.0</version>
 
     <name>CloudSim Plus API</name>
     <description>CloudSim Plus: A modern, highly extensible and easier-to-use Java 8+ Framework for Modeling and Simulation of Cloud Computing Infrastructures and Services</description>
@@ -81,9 +81,6 @@
                             <excludes>
                                 <exclude>**/integrationtests/*.java</exclude>
                             </excludes>
-                            <!-- Forking the process was causing runtime exceptions
-                             when running tests with Java 10+ -->
-                            <forkCount>0</forkCount>
                         </configuration>
                     </plugin>
 
@@ -116,11 +113,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <!-- Forking the process was causing runtime exceptions
-                             when running tests with Java 10+ -->
-                            <forkCount>0</forkCount>
-                        </configuration>
                     </plugin>
 
                     <plugin>
@@ -146,7 +138,6 @@
              A profile used to execute all goals required to deploy
              the project to the Maven Central.
              To execute use: mvn clean deploy -P sonatype
-
              To check the deployed artifact and probably release it to maven central
              you should visit https://oss.sonatype.org.
              MAKE SURE YOU ARE LOGGED IN TO SEE YOUR DEPLOYMENTS.
@@ -257,22 +248,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <!--
-            A profile used to deploy the project to GitHub Packages.
-            To execute use: mvn clean deploy -P github
-            -->
-            <id>github</id>
-
-            <distributionManagement>
-                <repository>
-                    <id>github</id>
-                    <name>GitHub manoelcampos Apache Maven Packages</name>
-                    <url>https://maven.pkg.github.com/manoelcampos/cloudsim-plus</url>
-                </repository>
-            </distributionManagement>
-        </profile>
     </profiles>
 
     <build>
@@ -284,14 +259,13 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <!-- There is some problem with the version 2.19.1 or with
                     Netbeans 8.0.2 that the JUnit GUI is not shown at the IDE-->
-                    <version>2.22.0</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.0.1</version>
-
                     <configuration>
                         <failOnError>false</failOnError>
                         <tags>
@@ -303,33 +277,32 @@
                             </tag>
                         </tags>
                     </configuration>
-
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.0.2</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<!-- Adds dependencies to classpath into the manifest file inside the jar !-->
-							<addClasspath>true</addClasspath>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- Adds dependencies to classpath into the manifest file inside the jar !-->
+                            <addClasspath>true</addClasspath>
 
-							<!-- Defines that the dependencies will follow the same
-							 hierarchical directory structure of a maven repository !-->
-							<classpathLayoutType>repository</classpathLayoutType>
+                            <!-- Defines that the dependencies will follow the same
+                             hierarchical directory structure of a maven repository !-->
+                            <classpathLayoutType>repository</classpathLayoutType>
 
-							<!-- Defines the root folder where the dependencies are. In this case
-							 is the the root of the local maven repository. !-->
-							<classpathPrefix>${user.home}/.m2/repository/</classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
+                            <!-- Defines the root folder where the dependencies are. In this case
+                             is the the root of the local maven repository. !-->
+                            <classpathPrefix>${user.home}/.m2/repository/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -349,18 +322,11 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.6</version>
                 <executions>
                     <execution>
-                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
                             <goal>report</goal>
                         </goals>
                     </execution>
@@ -370,7 +336,6 @@
             <!--
             Adds License Information to project source and binaries using com.mycila.maven-license-plugin.
             https://dzone.com/articles/adding-license-information.
-
             To add missing license information for source files run:
             mvn license:format
             -->
@@ -541,54 +506,10 @@
             <version>1.8.0-beta2</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.ejml/dense64 -->
         <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>dense64</artifactId>
-            <version>0.30</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>core</artifactId>
-            <version>0.30</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>dense64</artifactId>
-            <version>0.30</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>denseC64</artifactId>
-            <version>0.30</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ejml</groupId>
-            <artifactId>equation</artifactId>
-            <version>0.30</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-        <groupId>org.ejml</groupId>
-        <artifactId>simple</artifactId>
-        <version>0.30</version>
-        <scope>compile</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.cloudsimplus</groupId>
-            <artifactId>cloudsim-plus</artifactId>
-            <version>5.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.cloudsimplus</groupId>
-            <artifactId>cloudsim-plus-examples</artifactId>
-            <version>5.4.3</version>
+            <groupId>com.github.yannrichet</groupId>
+            <artifactId>JMathPlot</artifactId>
+            <version>1.0.1</version>
         </dependency>
     </dependencies>
 
@@ -618,16 +539,6 @@
                         </tag>
                     </tags>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.22.0</version>
             </plugin>
         </plugins>
     </reporting>
