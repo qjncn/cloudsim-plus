@@ -115,6 +115,7 @@ public class CloudletToVmMappingQlearn
 
             List<Integer> chosenVmID = new ArrayList<Integer>();
             List<Integer> chosenCloudletID = new ArrayList<Integer>();
+
             //随机遍历，彻底解决for中的max筛选次序问题
             Set<Integer> num = new LinkedHashSet<>();
             Random r2 = new Random();
@@ -122,7 +123,6 @@ public class CloudletToVmMappingQlearn
                 // 生成0-10的数组，观看有无重复值
                 num.add(r2.nextInt(NumOfCloudlet));
             }
-
             Integer[] strs = new Integer[num.size()];
             num.toArray(strs);
             double QvalueDelta = 0;
