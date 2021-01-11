@@ -26,10 +26,14 @@ package org.cloudsimplus.heuristics;
 import org.cloudbus.cloudsim.brokers.DatacenterBrokerQlearn;
 import org.cloudbus.cloudsim.cloudlets.Cloudlet;
 import org.cloudbus.cloudsim.vms.Vm;
-import org.math.plot.*;
-import javax.swing.*;
 import java.util.*;
+import java.util.List;
 //import java.util.List;
+
+//import org.python.core.PyFunction;
+//import org.python.core.PyList;
+////import org.python.core.PyObject;
+//import org.python.util.PythonInterpreter;
 
 
 /**
@@ -52,9 +56,9 @@ public class CloudletToVmMappingQlearn
     private double[][] graph;       //不同broker对象调用的算法graph值不同
     private double epsilon = 0.1;     //贪婪因子
 
-    private final double alpha = 0.02;       //学习率 权衡这次和上次学习结果
-    private final double gamma = 0.98;       //衰减因子 考虑未来奖励
-    private final double  threshold = 0.001; //收敛停止阀值
+    private final double alpha = 0.2;       //学习率 权衡这次和上次学习结果
+    private final double gamma = 0.8;       //衰减因子 考虑未来奖励
+    private final double  threshold = 0.0001; //收敛停止阀值
     private final int MAX_EPISODES = 1000000; // 一般都通过设置最大迭代次数来控制训练轮数
     private  Map map =  new HashMap();
     private  DatacenterBrokerQlearn broker;
@@ -107,14 +111,20 @@ public class CloudletToVmMappingQlearn
          * @param MAX_EPISODES：最大迭代次数
          */
 
+        //构造double[]变量
+        List processList = new ArrayList();
+        List QvalueDeltaList = new ArrayList();
         for (int episode = 0; episode < MAX_EPISODES; episode++) {
             double process = (double) 100* episode/MAX_EPISODES;
+            //赋值double[]
+            processList.add(process);
+
             System.out.println("第" + episode + "轮训练.....>>>>>>>>>" + process +"%" );
             //新设计了函数epsilon为收敛
-            //函数1
-            //epsilon = 0.2 * Math.cos(Math.PI/(2*MAX_EPISODES) * episode);
-            //函数2
-            epsilon = 0.1 * Math.cos(Math.PI/(MAX_EPISODES) * episode) + 0.1;
+            //函数1 开始慢逐渐快速下降
+            epsilon = 0.2 * Math.cos(Math.PI/(2*MAX_EPISODES) * episode);
+            //函数2 首尾慢，中间快
+            //epsilon = 0.1 * Math.cos(Math.PI/(MAX_EPISODES) * episode) + 0.1;
             System.out.println("本轮贪婪因子衰减为"+epsilon);
 
             List<Integer> chosenVmID = new ArrayList<Integer>();
@@ -148,7 +158,7 @@ public class CloudletToVmMappingQlearn
                 // 更新排除列表状态
                 chosenVmID.add(VmID);
                 //todo：奖励函数需要设计，倒数太简单，负数不对，负数上面代码VmID不能用max函数选，应该用min
-                double reward = 1000/graph[CloudID][VmID]; // 奖励，是执行时间的倒数
+                double reward = 1/graph[CloudID][VmID]; // 奖励，是执行时间的倒数
                 //double reward = 50*Math.exp(graph[CloudID][VmID]/100);
                 //更新Q表,注意最后那行只能和初始行循环更新
                 double QOldValue = Q[CloudID][VmID];
@@ -172,9 +182,12 @@ public class CloudletToVmMappingQlearn
                 System.out.println("第" + episode + "轮后,所得结果已经收敛,运算结束");
                 break;
             }
+            //构造double[]赋值
+            QvalueDeltaList.add(QvalueDelta);
 
-            draw2D(process,QvalueDelta);
         }
+        //画图
+        //draw2D(processList,QvalueDeltaList);
     }
 
     /**
@@ -273,7 +286,7 @@ public class CloudletToVmMappingQlearn
 
     /**
      * 取得当前批次经过Q算法优化之后的平均时间
-     * @return
+     * @return mean
      */
     public double getMeanTime() {
         List<Double> t = new ArrayList<Double>();
@@ -284,19 +297,34 @@ public class CloudletToVmMappingQlearn
         double mean = t.stream().reduce(Double::sum).orElse(Double.valueOf(0))/cloudletList.size();
         return mean;
     }
+//    /**
+//     * 画图 https://github.com/qjncn/jmathplot
+//     *
+//     */
+//    public void draw2D(JFrame frame, double[] x, double[] y){
+//        // create your PlotPanel (you can use it as a JPanel)
+//        Plot2DPanel plot = new Plot2DPanel("b plot panel");
+//        frame.setContentPane(plot);
+//        // add a line plot to the PlotPanel
+//        plot.addLinePlot("my plot", x, y);
+//    }
 
-    //画图 https://github.com/qjncn/jmathplot
-    void draw2D(double x,double y){
-        // create your PlotPanel (you can use it as a JPanel)
-        Plot2DPanel plot = new Plot2DPanel();
-
-        // add a line plot to the PlotPanel
-        plot.addLinePlot("my plot", x, y);
-
-        // put the PlotPanel in a JFrame, as a JPanel
-        JFrame frame = new JFrame("a plot panel");
-        frame.setContentPane(plot);
-        frame.setVisible(true);
-    }
+    /**
+     * 画图 https://www.cnblogs.com/wuwuyong/p/10600749.html
+     *
+     */
+//    public void draw2D(List a,List b) {
+//
+//        PythonInterpreter interpreter = new PythonInterpreter();
+//            interpreter.execfile("D:\\迅雷下载\\drawJava.py");
+//
+//        // 第一个参数为期望获得的函数（变量）的名字，第二个参数为期望返回的对象类型
+//        PyFunction pyFunction = interpreter.get("drawJava", PyFunction.class);
+//
+//        //调用函数，如果函数需要参数，在Java中必须先将参数转化为对应的“Python类型”
+//        pyFunction.__call__(new PyList(a), new PyList(b));
+//
+//    }
 
 }
+
